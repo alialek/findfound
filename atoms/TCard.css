@@ -1,0 +1,85 @@
+.team-card {
+  border-radius: 12px;
+  width: 305px !important;
+  cursor: pointer;
+  transition: transform 0.2s;
+  padding: 32px 24px;
+  transform: translateY(0px);
+}
+
+.team-card:hover {
+  transform: translateY(-10px);
+  transition: transform 0.2s;
+}
+.team-card__logo {
+  border-radius: 360px;
+  height: 56px;
+  width: 56px;
+  margin-bottom: 24px;
+  background-size: cover;
+  background-size: cover;
+  background-position: center center;
+}
+
+.team-card__title {
+  font-family: Gilroy, sans-serif;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 26px;
+  line-height: 41px;
+  margin-bottom: 16px;
+  letter-spacing: 0.25px;
+}
+
+.v-card--flat {
+  box-shadow: unset !important;
+}
+
+.team-card__company {
+  color: #000;
+  margin-bottom: 0 !important;
+  font-size: 16px;
+  line-height: 24px;
+  mix-blend-mode: normal;
+  opacity: 0.6;
+}
+
+.team-card__info {
+  margin-left: unset !important;
+}
+
+.team-card__caption {
+  margin-left: unset !important;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 14px;
+  line-height: 20px;
+  margin-top: 32px;
+  max-height: 60px;
+  overflow: hidden;
+  letter-spacing: 0.25px;
+}
+
+.team-card__action {
+  display: flex;
+  align-content: center;
+  width: 20px;
+  justify-content: center;
+}
+
+.squared {
+  width: 250px;
+  height: 200px;
+  border-radius: 10px;
+}
+
+.squared__col {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.squared__col .team-card__logo {
+  width: 60px;
+  height: 60px;
+}
