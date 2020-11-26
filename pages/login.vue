@@ -230,6 +230,7 @@ export default {
         .login(this.login)
         .then((res) => {
           this.saveCreds(res)
+          this.$router.push('/')
         })
         .catch(() => {
           this.$store.commit('processes/SET_ERROR', 'Введенные данные неверны')

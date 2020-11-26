@@ -1,6 +1,10 @@
 export default {
   ssr: false,
 
+  generate: {
+    routes: ['/'],
+  },
+
   target: 'static',
 
   // Global page headers (https://go.nuxtjs.dev/config-head)
@@ -19,12 +23,7 @@ export default {
   css: ['~/assets/css/app.css'],
 
   // Plugins to run before rendering page (https://go.nuxtjs.dev/config-plugins)
-  plugins: [
-    '~/plugins/axios',
-    '~/plugins/api',
-    '~/plugins/router',
-    '~/plugins/vc-date-picker',
-  ],
+  plugins: ['~/plugins/axios', '~/plugins/api', '~/plugins/vc-date-picker'],
 
   components: true,
 
@@ -54,6 +53,10 @@ export default {
   vuetify: {
     customVariables: ['~/assets/variables.scss'],
     optionsPath: './plugins/vuetify.js',
+  },
+
+  router: {
+    middleware: ['redirect'],
   },
 
   // Build Configuration (https://go.nuxtjs.dev/config-build)

@@ -211,14 +211,6 @@
 </template>
 
 <script>
-import {
-  skillset,
-  specializations,
-  universities,
-  forms,
-  createUserResume,
-} from '@/api'
-
 export default {
   name: 'Createresume',
   props: {
@@ -285,7 +277,8 @@ export default {
 
       this.isLoading = true
 
-      skillset({ text: val })
+      this.$api.skillset
+        .skillset({ text: val })
         .then((res) => {
           this.entries = res.data.items
         })
@@ -296,10 +289,10 @@ export default {
     },
   },
   mounted() {
-    specializations().then((res) => {
+    this.$api.specializations.specializations().then((res) => {
       this.specializations = res.data
     })
-    universities().then((res) => {
+    this.$api.universities.universities().then((res) => {
       this.universities = res.data
     })
     try {
@@ -337,12 +330,12 @@ export default {
         }),
       }
       if (!this.activeid) {
-        forms(data).then((res) => {
+        this.$api.forms.forms(data).then((res) => {
           this.$emit('done')
           this.$store.commit('processes/SET_SUCCESS', 'Резюме обновлено')
         })
       } else {
-        createUserResume(data, this.activeid).then((res) => {
+        this.$api.forms.createUserResume(data, this.activeid).then((res) => {
           this.$emit('done')
           this.$store.commit('processes/SET_SUCCESS', 'Резюме обновлено')
         })

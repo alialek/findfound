@@ -9,10 +9,13 @@ export const mutations = {
     state.info = data
   },
   setVacancies(state, data) {
-    if (data.university_id) data.university_id = +data.university_id
     state.vacancies = data
   },
 }
 export const actions = {
-  getUserInfo({ commit }) {},
+  getUserInfo({ commit }) {
+    window.$nuxt.$api.users.getUserInfo().then((res) => {
+      commit('setUser', res.data)
+    })
+  },
 }

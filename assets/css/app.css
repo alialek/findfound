@@ -100,15 +100,21 @@ a {
   background-color: white;
   border-radius: 100px !important;
 }
-
+/* 
 .theme--light.v-text-field > .v-input__control > .v-input__slot:before {
-  border: 1px solid #dddddd !important;
+  border: solid #dddddd !important;
+  border-width: thin 0 0 0;
+} */
+
+.v-slide-group__prev--disabled {
+  display: none !important;
 }
 
 .search.v-autocomplete__content.v-menu__content {
   box-shadow: unset !important;
 }
-.v-autocomplete__content.v-menu__content {
+.v-autocomplete__content.v-menu__content,
+.v-menu__content {
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.12) !important;
 }
 
@@ -138,23 +144,6 @@ a {
 .theme--light.v-expansion-panels .v-expansion-panel {
   border: 1px solid #dddddd !important;
   margin-top: 8px;
-}
-
-.placeholder__text {
-  font-family: Noto Sans;
-  font-style: normal;
-  font-weight: normal;
-  font-size: 14px;
-  line-height: 16px;
-  /* identical to box height, or 100% */
-  margin-top: 16px;
-  letter-spacing: 0.4px;
-
-  color: #000000;
-
-  mix-blend-mode: normal;
-  opacity: 0.6;
-  text-transform: uppercase;
 }
 
 .indicator {

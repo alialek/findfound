@@ -10,24 +10,47 @@
           inset 0px -1px 0px rgba(183, 180, 183, 0.3) !important;
       "
       elevate-on-scroll
-      scroll-target="#scrolling-techniques-7"
     >
-      <router-link style="text-decoration: none; color: black" to="/"
+      <router-link
+        v-resize="onResize"
+        style="text-decoration: none; color: black"
+        to="/"
         ><v-toolbar-title
+          v-if="width > 800"
           class="logo-font"
           style="font-size: 34px !important; font-weight: 700"
           >FindFound</v-toolbar-title
+        >
+        <v-toolbar-title
+          v-if="width <= 800"
+          class="logo-font"
+          style="font-size: 34px !important; font-weight: 700"
+          >FF</v-toolbar-title
         ></router-link
       >
-      <v-form @submit="$router.push(`/search?text=${text}`)">
+      <v-form
+        v-if="this.$route.path !== '/search'"
+        @submit="$router.push(`/search?text=${text}`)"
+      >
         <v-text-field
-          v-if="this.$route.name !== 'Поиск'"
+          v-if="width > 800"
           v-model="text"
           hide-details
           class="ml-10"
           dense
           outlined
           rounded
+          prepend-inner-icon="mdi-magnify"
+          single-line
+        ></v-text-field>
+        <v-text-field
+          v-if="width <= 800"
+          v-model="text"
+          hide-details
+          class="ml-4"
+          dense
+          full-width
+          outlined
           prepend-inner-icon="mdi-magnify"
           single-line
         ></v-text-field>
@@ -73,18 +96,18 @@ export default {
   data() {
     return {
       text: '',
+      width: 1920,
     }
   },
 
   computed: {
     token() {
-      return this.$store.state.utils.token
+      return localStorage.getItem('user_ff')
     },
     role() {
       return this.$store.state.utils.role
     },
     snackbar() {
-      console.log(this.$store.state)
       return this.$store.state.processes.snack
     },
     isAppBarHidden() {
@@ -92,12 +115,20 @@ export default {
       return !publicRoutes.includes(this.$route.path)
     },
   },
+  mounted() {
+    this.$store.dispatch('user/getUserInfo')
+    this.onResize()
+  },
+
   methods: {
     logout() {
       localStorage.removeItem('user_ff')
       localStorage.removeItem('role_ff')
       this.$router.push('/auth')
       document.location.reload()
+    },
+    onResize(event) {
+      this.width = window.innerWidth
     },
   },
 }

@@ -1,5 +1,4 @@
 import qs from 'qs'
-
 export default function ({ $axios, store, app }, inject) {
   const api = $axios.create({
     baseURL: 'https://hr-itmo.herokuapp.com/api/',
@@ -22,8 +21,7 @@ export default function ({ $axios, store, app }, inject) {
       return qs.stringify(params)
     },
   })
-
-  localStorage.getItem('user_ff') instanceof String
+  localStorage.getItem('user_ff').length
     ? api.setToken(`Token ${localStorage.getItem('user_ff')}`)
     : api.setToken(false)
 

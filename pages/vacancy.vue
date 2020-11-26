@@ -8,20 +8,19 @@
         <div
           style="cursor: pointer; margin-top: 8px"
           class="d-row pd-unset align-center"
-          @click="$router.push(`company?id=${vacancy.company.id}`)"
+          @click="$router.push(`company?id=${vacancy.company_id}`)"
         >
           <div
             :style="`height: 48px; width: 48px;background-size: contain; margin-right: 16px;background-image: url(${
-              vacancy.company ? vacancy.company.logo : ''
+              vacancy.company_logo ?? ''
             })`"
           ></div>
-          <span class="vacancy__author">{{ vacancy.company.name }}</span>
+          <span class="vacancy__author">{{ vacancy.company_name }}</span>
           <v-icon v-if="verified" class="ml-2" style="font-size: 20px"
             >mdi-check-circle</v-icon
           >
         </div>
-        <span class="vacancy__field">Краткое описание</span>
-        <div style="margin-top: 24px">{{ vacancy.short_description }}</div>
+
         <span class="vacancy__field">Описание</span>
         <div style="margin-top: 24px">
           <Post-viewer :post="JSON.parse(vacancy.description)" />
@@ -39,9 +38,7 @@
         <h2 class="vacancy__salary">{{ vacancy.salary }}₽</h2>
         <v-divider style="margin: 32px 0px"></v-divider>
         <span style="margin-top: 0px" class="vacancy__field">Адрес</span>
-        <b style="margin-top: 16px"
-          >{{ vacancy.company.city.name }}, {{ vacancy.company.address }}</b
-        >
+        <b style="margin-top: 16px">{{ vacancy.company.city.name }}</b>
         <span class="vacancy__field">Навыки:</span>
         <div class="d-row" style="margin-top: 24px">
           <div
