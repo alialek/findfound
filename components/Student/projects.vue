@@ -3,15 +3,25 @@
     <v-window v-model="step" class="student-window">
       <v-window-item :value="1">
         <v-col cols="12" class="col-sm-9">
-          <div @click="step = 2">
-            <ActionCard
-              title="Добавить проект"
-              :desc="
-                projects === []
-                  ? 'Чтобы найти людей в команду'
-                  : 'Потому что много не бывает'
-              "
-            /></div
+          <v-row>
+            <t-card
+              v-for="p in projects"
+              :id="p.id"
+              :key="p.id"
+              :title="p.name"
+              :description="p.description"
+              :logo="p.logo"
+              type="project"
+            ></t-card>
+            <div @click="step = 2">
+              <ActionCard
+                title="Добавить проект"
+                :desc="
+                  projects === []
+                    ? 'Чтобы найти людей в команду'
+                    : 'Потому что много не бывает'
+                "
+              /></div></v-row
         ></v-col>
       </v-window-item>
       <v-window-item :value="2">
@@ -64,13 +74,12 @@
               title="Логотип"
             >
               <v-file-input
-                v-model="image"
+                v-model="project.logo"
                 accept="image/png, image/jpeg, image/bmp"
                 prepend-icon=""
                 dense
                 :filled="disabled.project"
                 placeholder="Выберите файл"
-                @change="toBase64"
               >
                 <template v-slot:selection="{ text }">
                   <v-chip small label color="primary">
@@ -98,7 +107,24 @@
         <v-row>
           <div v-for="(p, id) in project.roles" :key="id">
             <div class="participant-card d-col mt-6 mx-2 team-card">
-              <v-icon class="mb-4" size="56">mdi-face-profile</v-icon>
+              <form-field
+                title="Фото участника"
+                icon="mdi-badge-account-horizontal"
+              >
+                <v-file-input
+                  v-model="p.photo"
+                  accept="image/png, image/jpeg, image/bmp"
+                  prepend-icon=""
+                  dense
+                  placeholder="Выберите фото*"
+                >
+                  <template v-slot:selection="{ text }">
+                    <v-chip small label color="primary">
+                      {{ text }}
+                    </v-chip>
+                  </template>
+                </v-file-input>
+              </form-field>
 
               <form-field
                 title="Фамилия и имя"
@@ -135,22 +161,23 @@
 <script>
 import ActionCard from '@/atoms/ActionCard.vue'
 import FormField from '@/atoms/Form-field.vue'
+import TCard from '~/atoms/TCard.vue'
 export default {
   name: 'Projects',
   components: {
     ActionCard,
     FormField,
+    TCard,
   },
   props: {
     projects: {
-      type: Object,
-      default: () => {},
+      type: Array,
+      default: () => [],
     },
   },
   data() {
     return {
       step: 2,
-      image: null,
       states: ['Идея', 'Готовится MVP', 'MVP готов', 'Pre-seed'],
       disabled: {
         project: true,
@@ -180,18 +207,39 @@ export default {
 
   methods: {
     toBase64(file) {
-      this.project.logo = new FileReader().readAsDataURL(file)
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader()
+        reader.readAsDataURL(file)
+        reader.onload = () => resolve(reader.result)
+        reader.onerror = (error) => reject(error)
+      })
     },
-    sendProject() {
-      const participants = this.project.roles.map((role) => {
-        delete role.id
-        return role
-      })
-      const data = { ...this.project, participants }
 
-      this.$api.projects.createProject(data).then((res) => {
-        console.log(res)
-      })
+    async sendProject() {
+      let roles
+      try {
+        roles = await Promise.all(
+          this.project.roles.map(async (role) => {
+            delete role.id
+            const photo = await this.toBase64(role.photo)
+            return { ...role, photo }
+          })
+        )
+      } catch {
+        roles = []
+      }
+
+      const logo = await this.toBase64(this.project.logo)
+      const data = { ...this.project, logo, roles }
+
+      this.$api.projects
+        .createProject(data)
+        .then((res) => {
+          this.$store.commit('processes/SET_SUCCESS', 'Компания создана')
+        })
+        .catch((err) => {
+          this.$store.commit('processes/SET_ERROR', err.response.data)
+        })
     },
     updateProject() {},
     manageParticipants(type, id) {

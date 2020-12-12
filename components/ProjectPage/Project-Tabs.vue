@@ -119,19 +119,18 @@
 
 <script>
 import ActionCard from '@/atoms/ActionCard.vue'
-import { vacancies, getResponses, putDecisionOnResponse } from '../api'
-import CreateVacancy from './CreateVacancy'
+import CreateVacancy from '@/components/CreateVacancy'
 
 export default {
-  name: 'Employer',
+  name: 'Project',
   components: {
     CreateVacancy,
     ActionCard,
   },
   props: {
     user: {
-      type: () => {},
-      default: {},
+      type: Object,
+      default: () => {},
     },
   },
   data() {
@@ -145,18 +144,10 @@ export default {
       return this.$store.state.vacancies.vacancies
     },
   },
-  mounted() {
-    getResponses().then((res) => {
-      this.responses = res.data
-    })
-    vacancies().then((res) => {
-      this.$store.commit('vacancies/setVacancies', res.data)
-    })
-  },
   methods: {
     sendDecision(id, decision, comment) {
       console.log(id, decision, comment)
-      putDecisionOnResponse(id, { decision, comment }).then((res) => {
+      this.$api.invitations.sendInvitiation({ vacancy_id: id }).then((res) => {
         this.$commit(
           'processes/SET_SUCCESS',
           decision === 'ACCEPT'

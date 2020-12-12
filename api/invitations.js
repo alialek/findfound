@@ -14,6 +14,7 @@ export default (axios) => ({
     return axios(`/invitations/${id}`)
   },
   /**
+   * Откликнуться на вакансию компании
    * @param data Объект с ID вакансии.
    * @param data.vacancy_id ID вакансии.
    */

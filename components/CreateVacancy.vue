@@ -141,8 +141,6 @@
 import EditorJS from '@editorjs/editorjs'
 import Paragraph from '@editorjs/paragraph'
 import List from '@editorjs/list'
-import { skillset, specializations } from '@/api'
-import { postVacancy } from '../api/rest/vacancies'
 
 export default {
   name: 'CreateVacancy',
@@ -243,7 +241,8 @@ export default {
 
       this.isLoading = true
 
-      skillset({ text: val })
+      this.$api.skillset
+        .skillset({ text: val })
         .then((res) => {
           this.entries = res.data.items
         })
@@ -255,7 +254,7 @@ export default {
   },
   mounted() {
     this.myEditor()
-    specializations().then((res) => {
+    this.$api.specializations.specializations().then((res) => {
       this.specializations = res.data
     })
     this.vacancy.courses.push(this.coursesTmpl)
@@ -275,13 +274,13 @@ export default {
           specializations: this.vacancy.specializations.map((s) => s.id),
         }
         if (!this.activeid) {
-          postVacancy(data).then((res) => {
+          this.$api.vacancies.createVacancy(data).then((res) => {
             console.log(res.data)
             this.$emit('done')
             this.$store.commit('processes/SET_SUCCESS', 'Вакансия создана')
           })
         } else {
-          postVacancy(data, this.activeid).then((res) => {
+          this.$api.vacancies.createVacancy(data, this.activeid).then((res) => {
             console.log(res.data)
             this.$emit('done')
             this.$store.commit('processes/SET_SUCCESS', 'Вакансия создана')

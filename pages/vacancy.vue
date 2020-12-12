@@ -12,7 +12,7 @@
         >
           <div
             :style="`height: 48px; width: 48px;background-size: contain; margin-right: 16px;background-image: url(${
-              vacancy.company_logo ?? ''
+              vacancy.company_logo || ''
             })`"
           ></div>
           <span class="vacancy__author">{{ vacancy.company_name }}</span>

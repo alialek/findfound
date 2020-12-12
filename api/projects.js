@@ -10,7 +10,7 @@ export default (axios) => ({
    * @param id Идентификатор
    */
   getProjectById(id) {
-    return axios(`/projects/${id}`)
+    return axios(`/projects/${id}/`)
   },
   /**
    * Создать проект
@@ -24,12 +24,12 @@ export default (axios) => ({
    * @param data Объект с проектом
    */
   updateProject(data, id) {
-    return axios.put(`/projects/${id}`, data)
+    return axios.put(`/projects/${id}/`, data)
   },
   /**
    * Удалить проект
    */
   deleteProject(id) {
-    return axios.delete(`/projects/${id}`)
+    return axios.delete(`/projects/${id}/`)
   },
 })

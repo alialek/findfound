@@ -59,6 +59,15 @@ export default {
     middleware: ['redirect'],
   },
 
+  vue: {
+    config: {
+      errorHandler(error, vm, info) {
+        console.log('error intercepted')
+        console.log(error, vm, info)
+      },
+    },
+  },
+
   // Build Configuration (https://go.nuxtjs.dev/config-build)
   build: {},
 }

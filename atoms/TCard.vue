@@ -8,10 +8,9 @@
             class="team-card__logo"
             :style="{ backgroundImage: `url(${logo})` }"
           />
-          <div v-if="external" class="team-card__external">superjob</div>
         </div>
-        <div v-if="!external">
-          <nuxt-link :to="`/vacancy?id=${id}`">
+        <div>
+          <nuxt-link :to="`/${type}?id=${id}`">
             <h4 class="team-card__title">{{ title }}</h4></nuxt-link
           >
           <nuxt-link :to="`/company?id=${companyId}`">
@@ -23,30 +22,14 @@
             </p></nuxt-link
           >
         </div>
-        <a v-if="external" target="_blank" :href="link">
-          <h4 class="team-card__title">{{ title }}</h4>
 
-          <p class="team-card__company">
-            {{ company }}
-            <v-icon v-if="verified" style="font-size: 20px"
-              >mdi-check-circle</v-icon
-            >
-          </p>
-        </a>
-        <nuxt-link v-if="!external" :to="`/vacancy?id=${id}`">
+        <nuxt-link :to="`/${type}?id=${id}`">
           <div>
             <p class="team-card__caption">
               {{ description }}
             </p>
           </div>
         </nuxt-link>
-        <a v-if="external" target="_blank" :href="link">
-          <div>
-            <p class="team-card__caption">
-              {{ description }}
-            </p>
-          </div>
-        </a>
         <v-row v-if="skills.length > 0">
           <div
             v-for="skill in skills"
@@ -94,7 +77,7 @@ export default {
       type: String,
     },
     company: {
-      default: 'Компания',
+      default: '',
       type: String,
     },
     companyId: {
@@ -108,6 +91,11 @@ export default {
     description: {
       default: 'Описание',
       type: String,
+    },
+    type: {
+      default: 'vacancy',
+      type: String,
+      validator: (value) => ['vacancy,  project'].includes(value),
     },
     id: {
       default: 0,
@@ -130,11 +118,6 @@ export default {
       default: () => [],
     },
     verified: {
-      type: Boolean,
-      default: false,
-    },
-
-    external: {
       type: Boolean,
       default: false,
     },

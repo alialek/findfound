@@ -20,6 +20,9 @@
     }
   },
   "dependencies": {
+    "@editorjs/editorjs": "^2.19.1",
+    "@editorjs/list": "^1.6.1",
+    "@editorjs/paragraph": "^2.8.0",
     "@nuxt/content": "^1.9.0",
     "@nuxtjs/axios": "^5.12.2",
     "core-js": "^3.6.5",
