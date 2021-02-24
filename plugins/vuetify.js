@@ -1,6 +1,12 @@
+import ru from 'vuetify/es5/locale/ru'
+
 const vuetify = {
   icons: {
     iconfont: 'mdi',
+  },
+  lang: {
+    locales: { ru },
+    current: 'ru',
   },
   font: {
     family: 'Noto Sans',

@@ -23,7 +23,12 @@ export default {
   css: ['~/assets/css/app.css'],
 
   // Plugins to run before rendering page (https://go.nuxtjs.dev/config-plugins)
-  plugins: ['~/plugins/axios', '~/plugins/api', '~/plugins/vc-date-picker'],
+  plugins: [
+    '~/plugins/axios',
+    '~/plugins/api',
+    '~/plugins/helpers',
+    '~/plugins/vc-date-picker',
+  ],
 
   components: true,
 
@@ -56,6 +61,7 @@ export default {
   },
 
   router: {
+    base: '/',
     middleware: ['redirect'],
   },
 

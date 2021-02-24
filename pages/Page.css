@@ -1,0 +1,89 @@
+.header__container {
+  margin-top: 100px;
+}
+
+.header__logo {
+  background-position: center !important;
+  background-size: cover !important;
+  width: 56px;
+  height: 56px;
+  border-radius: 100px;
+}
+
+.header__title {
+  margin-top: 24px;
+}
+
+.about-section {
+  margin-top: 24px;
+  /* margin-left: 8px; */
+}
+
+.description {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.team {
+  margin-top: 24px;
+}
+
+.small-header {
+  font-family: Noto Sans;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 14px;
+  line-height: 16px;
+  margin-top: 48px;
+  letter-spacing: 0.4px;
+
+  color: #000000;
+
+  mix-blend-mode: normal;
+  opacity: 0.6;
+}
+
+.custom-chip {
+  background: rgba(0, 130, 255, 0.12);
+  border-radius: 24px;
+  font-family: Noto Sans;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 19px;
+  text-align: center;
+  letter-spacing: 0.25px;
+  color: #0068cc;
+  padding: 6px 12px;
+  height: 30px;
+}
+
+.about-section__field .v-input--selection-controls {
+  margin-top: 0px !important;
+  padding-top: 4px;
+  padding-bottom: 20px;
+}
+
+.editorx_body {
+  border: 1px solid #ddd;
+  padding: 8px 16px;
+  border-radius: 10px;
+  height: 300px;
+  overflow: auto;
+  max-width: 650px;
+}
+
+.codex-editor .custom-checkbox .v-input--selection-controls {
+  margin-top: 0;
+  margin-bottom: 20px;
+}
+
+@media (max-width: 600px) {
+  .header__container {
+    margin-top: 16px;
+  }
+  .header__title {
+    margin-top: 8px;
+  }
+}

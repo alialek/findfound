@@ -1,15 +1,19 @@
 <template>
-  <div class="mx-4">
-    <div style="margin-top: 100px">
+  <div class="mx-4 header">
+    <div class="header__container">
       <div v-if="project.name">
-        <div
-          alt="logo"
-          class="team-card__logo"
-          :style="{ backgroundImage: `url(${project.logo})` }"
+        <v-icon v-if="project.logo === ''" style="font-size: 56px"
+          >mdi-domain</v-icon
+        >
+        <v-img
+          v-else
+          style="width: 70px; height: 70px; border-radius: 100px"
+          :src="`https://findfoundbucket.s3.amazonaws.com/media/${project.logo}`"
         />
         <h1 class="vacancy__title" style="margin-top: 24px">
           {{ project.name }}
         </h1>
+        <p class="small-header" style="margin-top: 0">Проект</p>
       </div>
       <div v-else>
         <v-progress-circular
@@ -24,13 +28,15 @@
       <project-tabs
         v-if="project.hasOwnProperty('id')"
         :project="project"
-        :responses="invitations"
+        :responses="responses"
+        @refresh="refresh"
       />
     </div>
   </div>
 </template>
 
 <script>
+import './Page.css'
 import ProjectTabs from '~/components/ProjectPage/Project-Tabs.vue'
 
 export default {
@@ -52,7 +58,7 @@ export default {
     $api,
   }) {
     store.dispatch('project/getProject', query.id)
-    store.dispatch('project/getProject', { me: 'creator' })
+    store.dispatch('project/getInvitations', { id: query.id })
   },
   computed: {
     project() {
@@ -62,6 +68,10 @@ export default {
       return this.$store.state.project.responses
     },
   },
-  methods: {},
+  methods: {
+    refresh() {
+      this.$store.dispatch('project/getProject', this.$route.query.id)
+    },
+  },
 }
 </script>

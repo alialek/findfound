@@ -16,6 +16,15 @@ export default (axios) => ({
     return axios.put('/users/me/', data)
   },
   /**
+   * Загрузить фото
+   * @param {object} data фото
+   */
+  uploadUserPhoto(id, data) {
+    return axios.post(`/users/${id}/photo/`, data, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    })
+  },
+  /**
    * Удалить свою страницу
    */
   deleteUser() {

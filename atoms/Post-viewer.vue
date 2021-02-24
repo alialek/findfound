@@ -1,5 +1,5 @@
-/* eslint-disable vue/no-v-html */
 <template>
+  <!-- eslint-disable vue/no-v-html -->
   <div>
     <div v-for="(tag, n) in text.blocks" :key="n">
       <p

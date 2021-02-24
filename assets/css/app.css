@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap');
+@import './fonts.css';
 
 /*LAYOUT*/
 
@@ -45,12 +45,6 @@
 * {
   font-family: 'Noto Sans', sans-serif;
 }
-@font-face {
-  font-family: 'Gilroy';
-  src: url('/Gilroy-Medium.ttf') format('tff');
-  font-weight: 600;
-  font-style: normal;
-}
 
 .logo-font {
   font-family: 'Gilroy', sans-serif !important;
@@ -65,30 +59,33 @@ a {
 }
 
 .search {
-  max-width: 500px !important;
+  max-width: 650px !important;
   width: 100% !important;
 }
 .search .v-menu__content {
   box-shadow: unset !important;
 }
-
+/* 
 .search .v-application .primary--text {
   color: black !important;
   caret-color: black !important;
-}
+} */
 
 .main {
   justify-content: space-evenly !important;
 }
 .main__slides {
   width: 100%;
-  max-width: 800px;
-  justify-content: space-evenly;
-  margin: 0 auto;
+  justify-content: center;
+  gap: 8px;
 }
 
 .main .main__slide {
   justify-content: center;
+}
+
+.nowrap {
+  flex-wrap: nowrap;
 }
 
 .home {
@@ -96,9 +93,17 @@ a {
 }
 
 /*VUETIFY OVERRIDE*/
+
+.v-btn {
+  letter-spacing: unset !important;
+}
 .search.theme--light.v-input {
   background-color: white;
-  border-radius: 100px !important;
+}
+
+.search.v-text-field--enclosed .v-input__append-outer {
+  margin-top: unset;
+  margin-left: 16px;
 }
 /* 
 .theme--light.v-text-field > .v-input__control > .v-input__slot:before {
@@ -122,24 +127,13 @@ a {
   opacity: 1;
 }
 
+.v-autocomplete:not(.v-input--is-focused).v-select--chips input {
+  max-height: 40px !important;
+}
+
 .theme--light.v-select .v-select__selection--disabled {
   color: black;
 }
-/* .search.v-text-field--outlined {
-	border: unset !important;
-}
-.search.v-text-field > .v-input__control > .v-input__slot:before,
-.search.v-text-field--outlined.v-input--is-focused fieldset,
-.search.v-text-field--outlined.v-input--has-state fieldset,
-.search.v-text-field > .v-input__control > .v-input__slot:before {
-	border: unset !important;
-}
-.search.theme--light.v-text-field--outlined:not(.v-input--is-focused):not(.v-input--has-state)
-	> .v-input__control
-	> .v-input__slot
-	fieldset {
-	border: unset !important;
-} */
 
 .theme--light.v-expansion-panels .v-expansion-panel {
   border: 1px solid #dddddd !important;
@@ -161,4 +155,10 @@ a {
 
 .picker input {
   border: 1px solid rgba(10, 10, 10, 0.5);
+}
+
+@-moz-document url-prefix() {
+  body {
+    font-weight: lighter !important;
+  }
 }

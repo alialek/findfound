@@ -1,33 +1,48 @@
 .auth__image {
-	background-size: cover;
-	background-image: url(https://i.pinimg.com/originals/d7/6d/49/d76d4961d8867e172db3834582d3c5bb.jpg);
-}
-
-.auth .v-window,
-.auth .v-window__item {
-	width: 70%;
-	max-width: 400px;
+  background-size: cover;
+  background-image: url(https://i.pinimg.com/originals/d7/6d/49/d76d4961d8867e172db3834582d3c5bb.jpg);
 }
 
 .link {
-	display: inline-block;
+  display: inline-block;
 }
 
 .auth__col {
-	position: relative;
+  position: relative;
 }
 
 .auth__logo {
-	position: absolute;
-	top: 4%;
-}
-
-.auth-card {
-	position: relative;
+  position: absolute;
+  top: 4%;
 }
 
 .auth__back-icon {
-	left: 20;
-	position: absolute;
-	top: 20;
+  left: 20;
+  position: absolute;
+  top: 20;
+}
+
+.picker input {
+  width: 100%;
+  padding-top: 10px !important;
+  padding-bottom: 10px !important;
+  border: unset;
+  border-bottom: 1px solid #aaa;
+}
+
+.theme--light .picker input {
+  background-color: rgba(0, 0, 0, 0.06);
+}
+
+.auth__card {
+  border: 1px solid #dddddd !important;
+  padding: 32px;
+  width: 90%;
+  max-width: 400px;
+}
+
+@media (max-width: 960px) {
+  .auth__card {
+    padding: 16px;
+  }
 }

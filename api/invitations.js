@@ -4,14 +4,14 @@ export default (axios) => ({
    * @param {object} params Чтобы получить все отклики на свои вакансии - me=creator. Чтобы получить все ответы проектов на свои отклики - me=member. Чтобы получить оба варианта ?me=member&me=creator или /
    */
   getInvitations(params) {
-    return axios(`/invitations/`, params)
+    return axios(`/invitations/`, { params })
   },
   /**
    * Посмотреть приглашение по ID
    * @param {number} id
    */
   getInvitationById(id) {
-    return axios(`/invitations/${id}`)
+    return axios(`/invitations/${id}/`)
   },
   /**
    * Откликнуться на вакансию компании
@@ -19,20 +19,21 @@ export default (axios) => ({
    * @param data.vacancy_id ID вакансии.
    */
   sendInvitation(data) {
-    return axios(`/invitations/`, data)
+    return axios.post(`/invitations/`, data)
   },
   /**
    * Ответить на приглашение по ID
    * @param {number} id
+   * @param {string} decision
    */
-  respondInvitationById(id) {
-    return axios.put(`/invitations/${id}`)
+  respondInvitationById(id, data) {
+    return axios.put(`/invitations/${id}/`, data)
   },
   /**
    * Ответить на приглашение по ID
    * @param {number} id
    */
   deleteInvitationById(id) {
-    return axios.delete(`/invitations/${id}`)
+    return axios.delete(`/invitations/${id}/`)
   },
 })

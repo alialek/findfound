@@ -50,17 +50,7 @@
             ></v-col
           >
         </v-row>
-        <span class="mb-2 resume__field"
-          >Достижения
-          <v-icon @click="resume.achievements.push('')">mdi-plus</v-icon></span
-        >
-        <div v-for="(achievement, i) in resume.achievements" :key="i + 'a'">
-          <v-text-field
-            v-model="resume.achievements[i]"
-            label="Достижение"
-            outlined
-          ></v-text-field>
-        </div>
+
         <span class="mb-2 resume__field"
           >Образование
           <v-icon @click="resume.educations.push(educationTmpl)"
@@ -203,6 +193,14 @@
           </v-checkbox>
           <v-divider class="my-4"></v-divider>
         </div>
+
+        <!-- <div v-for="(achievement, i) in resume.achievements" :key="i + 'a'">
+          <v-text-field
+            v-model="resume.achievements[i]"
+            label="Достижение"
+            outlined
+          ></v-text-field>
+        </div> -->
 
         <v-btn depressed color="primary" mt-8 @click="save"> Сохранить </v-btn>
       </v-col>

@@ -6,7 +6,8 @@ export default (axios) => ({
    * @param params.skill ID скилла
    */
   vacancies(params) {
-    return axios.get('/vacancies/', params)
+    console.log(params)
+    return axios.get('/vacancies/', { params })
   },
 
   getVacancies() {
@@ -26,7 +27,7 @@ export default (axios) => ({
    */
 
   deleteVacancy(id) {
-    return axios.delete(`/vacancies/${id}`)
+    return axios.delete(`/vacancies/${id}/`)
   },
   /**
    * Обновить вакансию
@@ -34,7 +35,7 @@ export default (axios) => ({
    * @param {number} id
    */
   updateVacancy(data, id = 0) {
-    return axios.post(`/vacancies/?company${id}`, data)
+    return axios.put(`/vacancies/${id}/`, data)
   },
   /**
    * Получить вакансию по ID

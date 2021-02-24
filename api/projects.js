@@ -13,6 +13,24 @@ export default (axios) => ({
     return axios(`/projects/${id}/`)
   },
   /**
+   * Загрузить лого
+   * @param {object} data лого
+   */
+  uploadLogo(id, data) {
+    return axios.post(`/projects/${id}/logo/`, data, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    })
+  },
+  /**
+   * Загрузить лого
+   * @param {object} data лого
+   */
+  uploadRolePhoto(data) {
+    return axios.post(`/projects/role-photo/`, data, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    })
+  },
+  /**
    * Создать проект
    * @param data Объект с проектом
    */

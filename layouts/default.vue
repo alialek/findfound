@@ -1,7 +1,7 @@
 <template>
   <v-app>
     <v-app-bar
-      v-if="isAppBarHidden"
+      v-if="$vuetify.breakpoint.mdAndUp"
       absolute
       color="white"
       style="
@@ -11,56 +11,38 @@
       "
       elevate-on-scroll
     >
-      <router-link
-        v-resize="onResize"
-        style="text-decoration: none; color: black"
-        to="/"
-        ><v-toolbar-title
-          v-if="width > 800"
-          class="logo-font"
-          style="font-size: 34px !important; font-weight: 700"
-          >FindFound</v-toolbar-title
+      <div class="d-row align-center">
+        <router-link
+          v-resize="onResize"
+          style="text-decoration: none; color: black"
+          to="/"
+          ><v-toolbar-title
+            class="logo-font"
+            style="font-size: 34px !important; font-weight: 700"
+            >FindFound</v-toolbar-title
+          >
+        </router-link>
+        <v-form
+          v-if="isSearchHidden"
+          @submit.prevent="$router.push(`/search?text=${text}`)"
         >
-        <v-toolbar-title
-          v-if="width <= 800"
-          class="logo-font"
-          style="font-size: 34px !important; font-weight: 700"
-          >FF</v-toolbar-title
-        ></router-link
-      >
-      <v-form
-        v-if="this.$route.path !== '/search'"
-        @submit="$router.push(`/search?text=${text}`)"
-      >
-        <v-text-field
-          v-if="width > 800"
-          v-model="text"
-          hide-details
-          class="ml-10"
-          dense
-          outlined
-          rounded
-          prepend-inner-icon="mdi-magnify"
-          single-line
-        ></v-text-field>
-        <v-text-field
-          v-if="width <= 800"
-          v-model="text"
-          hide-details
-          class="ml-4"
-          dense
-          full-width
-          outlined
-          prepend-inner-icon="mdi-magnify"
-          single-line
-        ></v-text-field>
-      </v-form>
+          <v-text-field
+            v-model="text"
+            hide-details
+            class="ml-10 custom-field"
+            dense
+            outlined
+            prepend-inner-icon="mdi-magnify"
+            single-line
+          ></v-text-field>
+        </v-form>
+      </div>
 
       <v-spacer></v-spacer>
 
       <v-menu v-if="token" offset-y>
         <template v-slot:activator="{ on }"
-          ><v-icon class="menu-icon" v-on="on"
+          ><v-icon style="font-size: 36px" class="menu-icon" v-on="on"
             >mdi-account-circle-outline</v-icon
           >
         </template>
@@ -68,12 +50,21 @@
           <v-list-item to="/cabinet">
             <v-list-item-title>Личный кабинет</v-list-item-title>
           </v-list-item>
-          <v-list-item color="error" @click="logout">
-            <v-list-item-title>Выйти</v-list-item-title>
+          <v-list-item @click="logout">
+            <v-list-item-title color="error">Выйти</v-list-item-title>
           </v-list-item>
         </v-list></v-menu
       >
+      <v-row v-else class="justify-end" style="gap: 8px">
+        <div v-if="$route.path !== '/login'">
+          <v-btn to="/login" depressed text>Вход</v-btn>
+          <v-btn to="/login?tab=registration" depressed color="primary" text
+            >Регистрация</v-btn
+          >
+        </div>
+      </v-row>
     </v-app-bar>
+
     <v-snackbar v-model="snackbar.enabled" :timeout="3000">
       {{ snackbar.text }}
       <template v-slot:action="{ attrs }">
@@ -87,7 +78,59 @@
         </v-btn>
       </template>
     </v-snackbar>
-    <nuxt :style="{ marginTop: isAppBarHidden ? '64px' : '' }" />
+    <nuxt
+      :style="{
+        marginTop: isSearchHidden ? '64px' : '',
+        marginBottom: $vuetify.breakpoint.mdAndUp ? '' : '64px',
+      }"
+    />
+    <v-bottom-navigation
+      v-if="!$vuetify.breakpoint.mdAndUp"
+      color="primary"
+      fixed
+      grow
+    >
+      <v-btn @click="showExtension = !showExtension">
+        <span>Поиск</span>
+
+        <v-icon>mdi-magnify</v-icon>
+      </v-btn>
+      <v-menu v-if="token" offset-y :nudge-bottom="120">
+        <template v-slot:activator="{ on }"
+          ><v-btn v-on="on">
+            <span>Меню</span>
+
+            <v-icon>mdi-menu</v-icon>
+          </v-btn>
+        </template>
+        <v-list>
+          <v-list-item to="/">
+            <v-list-item-title>Главная</v-list-item-title>
+          </v-list-item>
+          <v-list-item to="/cabinet">
+            <v-list-item-title>Личный кабинет</v-list-item-title>
+          </v-list-item>
+          <v-list-item @click="logout">
+            <v-list-item-title color="error">Выйти</v-list-item-title>
+          </v-list-item>
+        </v-list></v-menu
+      >
+    </v-bottom-navigation>
+    <v-dialog v-model="showExtension">
+      <v-card class="pa-1" elevation="0">
+        <v-card-title>Поиск</v-card-title>
+        <v-card-text>
+          <v-form @submit.prevent="$router.push(`/search?text=${text}`)">
+            <v-text-field
+              v-model="text"
+              hide-details
+              placeholder="Введите название вакансии"
+              append-inner-icon="mdi-magnify"
+              single-line
+            ></v-text-field> </v-form
+        ></v-card-text>
+      </v-card>
+    </v-dialog>
   </v-app>
 </template>
 
@@ -95,6 +138,7 @@
 export default {
   data() {
     return {
+      showExtension: false,
       text: '',
       width: 1920,
     }
@@ -110,13 +154,15 @@ export default {
     snackbar() {
       return this.$store.state.processes.snack
     },
-    isAppBarHidden() {
-      const publicRoutes = ['/', '/login']
+    isSearchHidden() {
+      const publicRoutes = ['/search', '/']
       return !publicRoutes.includes(this.$route.path)
     },
   },
   mounted() {
-    this.$store.dispatch('user/getUserInfo')
+    if (this.$route.name !== 'login' && this.token) {
+      this.$store.dispatch('user/getUserInfo')
+    }
     this.onResize()
   },
 
@@ -137,5 +183,18 @@ export default {
 <style lang="css">
 .menu-icon {
   font-size: 32px;
+}
+
+.custom-field
+  .theme--light.v-text-field--outlined:not(.v-input--is-focused):not(.v-input--has-state)
+  > .v-input__control
+  > .v-input__slot
+  fieldset {
+  color: #ccc !important;
+}
+
+.v-toolbar__extension {
+  border-bottom: 1px solid #eee;
+  margin-bottom: 8px;
 }
 </style>

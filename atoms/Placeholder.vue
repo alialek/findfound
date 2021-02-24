@@ -2,6 +2,7 @@
   <v-col class="justify-center placeholder align-center">
     <img :src="emoji" class="placeholder__emoji" alt="Эмодзи" />
     <p class="placeholder__text">{{ text }}</p>
+    <slot />
   </v-col>
 </template>
 

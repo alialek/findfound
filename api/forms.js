@@ -7,6 +7,15 @@ export default (axios) => ({
     return axios.post(`/forms/`, data)
   },
   /**
+   * Загрузить фото
+   * @param {object} data фото
+   */
+  uploadPhoto(id, data) {
+    return axios.post(`/forms/${id}/photo/`, data, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    })
+  },
+  /**
    * Создание резюме Администратором
    * @param {object} data Объект с данными резюме
    */ createUserResume(data, id) {
