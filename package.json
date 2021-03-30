@@ -28,7 +28,7 @@
     "core-js": "^3.6.5",
     "nuxt": "^2.14.6",
     "qs": "^6.9.4",
-    "v-calendar": "^2.0.2"
+    "v-calendar": "^2.3.0"
   },
   "devDependencies": {
     "@mdi/font": "^5.8.55",
