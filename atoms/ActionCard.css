@@ -83,7 +83,7 @@
   height: 60px;
 }
 
-@media (max-width: 960px) {
+@media (max-width: 420px) {
   .action-card {
     min-width: 320px;
     width: 100% !important;
@@ -93,10 +93,10 @@
     margin-bottom: 4px;
   }
 }
-
+/* 
 @media (max-width: 320px) {
   .action-card {
     min-width: 230px;
     width: 100% !important;
   }
-}
+} */

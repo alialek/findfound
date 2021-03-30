@@ -1,5 +1,6 @@
 export const state = () => ({
   isLoading: false,
+  isBlockedLoading: false,
   isError: '',
   snack: {
     enabled: false,
@@ -14,6 +15,9 @@ export const mutations = {
     state.snack.color = 'error'
     state.snack.text = data
   },
+  HIDE_SNACKBAR(state) {
+    state.snack.enabled = false
+  },
   SET_SUCCESS(state, data) {
     state.snack.enabled = true
     state.snack.color = 'success'
@@ -24,5 +28,11 @@ export const mutations = {
   },
   LOADING_START(state) {
     state.isLoading = true
+  },
+  BLOCKED_LOADING_STOP(state) {
+    state.isBlockedLoading = false
+  },
+  BLOCKED_LOADING_START(state) {
+    state.isBlockedLoading = true
   },
 }

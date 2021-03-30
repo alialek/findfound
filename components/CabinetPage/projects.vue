@@ -2,44 +2,54 @@
   <div style="width: 100%">
     <v-window v-model="step" class="student-window">
       <v-window-item :value="1">
-        <v-col cols="12">
-          <v-row>
-            <ActionCard
-              title="Добавить проект"
-              :desc="
-                projects === []
-                  ? 'Чтобы найти людей в команду'
-                  : 'Потому что много не бывает'
-              "
-              @click.native="step = 2"
-            />
-            <t-card
-              v-for="p in projects"
-              :id="p.id"
-              :key="p.id"
-              :title="p.name"
-              :description="p.description"
-              :logo="p.logo"
-              type="project"
-            >
-              <template v-slot:menu>
-                <v-menu offset-y>
-                  <template v-slot:activator="{ on }">
-                    <v-icon v-on="on">mdi-dots-vertical</v-icon>
-                  </template>
-                  <v-list dense>
-                    <v-list-item color="error" @click="deleteProject(p.id)">
-                      <v-list-item-icon>
-                        <v-icon>mdi-delete</v-icon>
-                      </v-list-item-icon>
-                      <v-list-item-title>Удалить</v-list-item-title>
-                    </v-list-item>
-                  </v-list>
-                </v-menu>
-              </template>
-            </t-card>
-          </v-row></v-col
-        >
+        <v-row>
+          <ActionCard
+            title="Добавить проект"
+            :desc="
+              projects === []
+                ? 'Чтобы найти людей в команду'
+                : 'Потому что много не бывает'
+            "
+            @click.native="step = 2"
+          />
+          <t-card
+            v-for="p in projects"
+            :id="p.id"
+            :key="p.id"
+            :title="p.name"
+            :description="p.description"
+            :logo="p.logo"
+            type="project"
+          >
+            <template v-slot:menu>
+              <v-menu offset-y>
+                <template v-slot:activator="{ on }">
+                  <v-icon v-on="on">mdi-dots-vertical</v-icon>
+                </template>
+                <v-list dense>
+                  <v-list-item @click="editProjectLogo(p.id)">
+                    <v-list-item-icon>
+                      <v-icon>mdi-camera</v-icon>
+                    </v-list-item-icon>
+                    <v-list-item-title>Изменить логотип</v-list-item-title>
+                  </v-list-item>
+                  <v-list-item @click="editProject(p.id)">
+                    <v-list-item-icon>
+                      <v-icon>mdi-pencil</v-icon>
+                    </v-list-item-icon>
+                    <v-list-item-title>Редактировать</v-list-item-title>
+                  </v-list-item>
+                  <v-list-item @click="deleteProject(p.id)">
+                    <v-list-item-icon>
+                      <v-icon color="error">mdi-delete</v-icon>
+                    </v-list-item-icon>
+                    <v-list-item-title color="error">Удалить</v-list-item-title>
+                  </v-list-item>
+                </v-list>
+              </v-menu>
+            </template>
+          </t-card>
+        </v-row>
       </v-window-item>
       <v-window-item :value="2">
         <div class="about-section__heading d-row align-center">
@@ -61,7 +71,23 @@
               ></v-text-field>
             </form-field>
 
-            <form-field icon="mdi-ladder" title="Стадия*">
+            <form-field title="Город" icon="mdi-city">
+              <v-combobox
+                v-model="project.city"
+                :items="cities"
+                :search-input="searchCity"
+                hide-no-data
+                hide-selected
+                item-text="name"
+                item-value="id"
+                filled
+                return-object
+                dense
+                placeholder="Начните вводить название"
+              ></v-combobox>
+            </form-field>
+
+            <form-field icon="mdi-ladder" title="Стадия">
               <v-select
                 v-model="project.state"
                 :rules="[rules.required]"
@@ -86,8 +112,9 @@
             <form-field icon="mdi-camera" title="Логотип">
               <v-file-input
                 v-model="logo"
-                accept="image/png, image/jpeg, image/bmp"
                 prepend-icon=""
+                prepend-inner-icon="mdi-paperclip"
+                accept="image/png, image/jpeg, image/bmp"
                 dense
                 filled
                 placeholder="Выберите файл"
@@ -109,8 +136,23 @@
               ></v-textarea>
             </form-field>
           </v-col>
+          <v-col class="form-grid">
+            <form-field
+              v-for="contact in filteredContacts"
+              :key="contact.id"
+              :title="contact.name"
+              :icon="contact.icon"
+            >
+              <v-text-field
+                v-model="project[contact.id]"
+                filled
+                dense
+                placeholder="Введите ссылку"
+              ></v-text-field>
+            </form-field>
+          </v-col>
         </v-row>
-        <div class="about-section__heading">
+        <!-- <div class="about-section__heading">
           <h3>
             Команда
             <span>
@@ -125,9 +167,9 @@
               ></span
             >
           </h3>
-        </div>
-        <v-divider></v-divider>
-        <v-row>
+        </div> -->
+        <!-- <v-divider></v-divider> -->
+        <!-- <v-row>
           <div
             v-for="(p, id) in project.roles"
             :key="id"
@@ -191,7 +233,7 @@
             >
             <h4 class="participant-card__title mt-4">Добавить участника</h4>
           </div>
-        </v-row>
+        </v-row> -->
         <br />
         <v-btn
           class="mt-2 mb-4"
@@ -204,12 +246,29 @@
         >
       </v-window-item>
     </v-window>
+    <v-dialog v-model="editProjectLogoDialog" max-width="600">
+      <project-logo-editor
+        :project-id="activeProject"
+        @closeProjectEditor="editProjectLogoDialog = false"
+        @updateProjectLogo="updateProjectLogo"
+      />
+    </v-dialog>
+    <v-dialog v-model="editProjectDialog" fullscreen hide-overlay>
+      <project-editor
+        :project-id="activeProject"
+        @closeProjectEditor="editProjectDialog = false"
+      />
+    </v-dialog>
+    <ConfirmDialog ref="confirm" />
   </div>
 </template>
 
 <script>
 import ActionCard from '@/atoms/ActionCard.vue'
 import FormField from '@/atoms/Form-field.vue'
+import ProjectEditor from '@/components/CabinetPage/ProjectEditor'
+import ProjectLogoEditor from '@/components/CabinetPage/ProjectLogoEditor'
+import ConfirmDialog from '@/components/dialogs/ConfirmDialog'
 import TCard from '~/atoms/TCard.vue'
 export default {
   name: 'Projects',
@@ -217,6 +276,9 @@ export default {
     ActionCard,
     FormField,
     TCard,
+    ProjectEditor,
+    ProjectLogoEditor,
+    ConfirmDialog,
   },
   props: {
     projects: {
@@ -231,16 +293,32 @@ export default {
       disabled: {
         project: true,
       },
+      filteredContacts: [],
+      activeProject: null,
+      editProjectDialog: false,
+      editProjectLogoDialog: false,
+      searchCity: null,
       logo: null,
       project: {
         name: '',
         state: '',
         subject: '',
         description: '',
-        city: 2,
+        city: null,
         roles: [],
+        website: '',
+        instagram: '',
+        vk: '',
+        twitter: '',
+        facebook: '',
       },
-      requiredProjectFields: ['name', 'description', 'state', 'subject'],
+      requiredProjectFields: [
+        'name',
+        'description',
+        'state',
+        'subject',
+        'city',
+      ],
       participant: {
         full_name: '',
         position: '',
@@ -256,71 +334,86 @@ export default {
         true
       )
     },
+    cities() {
+      return this.$store.state.utils.cities
+    },
     rules() {
       return this.$store.state.utils.rules
     },
   },
+  mounted() {
+    this.filteredContacts = this.$store.state.utils.contacts
+      .filter(
+        (contact) =>
+          contact.id !== 'linkedin' &&
+          contact.id !== 'telegram' &&
+          contact.id !== 'github'
+      )
+      .slice()
+  },
   methods: {
-    toBase64(file) {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader()
-        reader.readAsDataURL(file)
-        reader.onload = () => resolve(reader.result)
-        reader.onerror = (error) => reject(error)
-      })
-    },
-
-    deleteProject(id) {
-      this.$api.projects
-        .deleteProject(id)
-        .then((res) => {
-          this.$store.commit('processes/SET_SUCCESS', 'Проект удален')
-          this.$store.commit('user/filterUserCompanies', id)
-        })
-        .catch((err) => {
-          console.log(err)
-          this.$store.commit('processes/SET_ERROR', 'Произошла ошибка')
-        })
-    },
-
-    async sendProject() {
-      let roles
-      try {
-        roles = await Promise.all(
-          this.project.roles.map(async (role) => {
-            delete role.id
-            const formData = new FormData()
-            formData.append('file', role.photo)
-
-            const { data } = await this.$api.projects.uploadRolePhoto(formData)
-            console.log('sd', data)
-            const resp = {
-              ...role,
-              photo: data.file.split(
-                'https://findfoundbucket.s3.amazonaws.com/media/'
-              )[1],
-            }
-
-            return resp
-          })
+    async deleteProject(id) {
+      if (
+        await this.$refs.confirm.open(
+          'Подтверждение',
+          'Вы точно хотите удалить этот проект?'
         )
-      } catch (err) {
-        console.log(err)
-        roles = []
+      ) {
+        this.$api.projects.deleteProject(id).then((res) => {
+          this.$emit('refresh')
+          this.$store.commit('processes/SET_SUCCESS', 'Проект удален')
+        })
       }
-      const data = { ...this.project, roles }
+    },
+    editProject(id) {
+      this.activeProject = id
+      this.editProjectDialog = true
+    },
+    editProjectLogo(id) {
+      this.activeProject = id
+      this.editProjectLogoDialog = true
+    },
+    // toBase64(file) {
+    //   return new Promise((resolve, reject) => {
+    //     const reader = new FileReader()
+    //     reader.readAsDataURL(file)
+    //     reader.onload = () => resolve(reader.result)
+    //     reader.onerror = (error) => reject(error)
+    //   })
+    // },
+
+    sendProject() {
+      const roles = []
+      // try {
+      //   roles = await Promise.all(
+      //     this.project.roles.map(async (role) => {
+      //       delete role.id
+      //       const formData = new FormData()
+      //       formData.append('file', role.photo)
+
+      //       const { data } = await this.$api.projects.uploadRolePhoto(formData)
+      //       console.log('sd', data)
+      //       const resp = {
+      //         ...role,
+      //         photo: data.file.split(
+      //           'https://findfoundbucket.s3.amazonaws.com/media/'
+      //         )[1],
+      //       }
+
+      //       return resp
+      //     })
+      //   )
+      // } catch (err) {
+      //   console.log(err)
+      //   roles = []
+      // }
+      const data = { ...this.project, roles, city: this.project.city.id }
 
       this.$api.projects
-        .createProject(data)
+        .createProject(data, this.project.id)
         .then((res) => {
           if (this.logo !== null) {
-            const formData = new FormData()
-            formData.append('file', this.logo)
-            this.$api.projects.uploadLogo(res.data.id, formData).then(() => {
-              this.step = 1
-              this.$emit('refresh')
-              this.$store.commit('processes/SET_SUCCESS', 'Проект добавлен')
-            })
+            this.updateProjectLogo(res.data.id, this.logo, false)
           } else {
             this.step = 1
             this.$emit('refresh')
@@ -331,14 +424,26 @@ export default {
           this.$store.commit('processes/SET_ERROR', err.response.data)
         })
     },
-    updateProject() {},
-    manageParticipants(type, id) {
-      type === 'add'
-        ? this.project.roles.push({ ...this.participant, id: Math.random() })
-        : (this.project.roles = this.project.roles.filter(
-            (role) => role.id !== id
-          ))
+    updateProjectLogo(id, logo, isEditing) {
+      const formData = new FormData()
+      formData.append('file', logo)
+      this.$api.projects.uploadLogo(id, formData).then(() => {
+        this.step = 1
+        this.$emit('refresh')
+        if (this.editProjectLogoDialog) this.editProjectLogoDialog = false
+        this.$store.commit(
+          'processes/SET_SUCCESS',
+          isEditing ? 'Логотип обновлен' : 'Проект добавлен'
+        )
+      })
     },
+    // manageParticipants(type, id) {
+    //   type === 'add'
+    //     ? this.project.roles.push({ ...this.participant, id: Math.random() })
+    //     : (this.project.roles = this.project.roles.filter(
+    //         (role) => role.id !== id
+    //       ))
+    // },
   },
 }
 </script>

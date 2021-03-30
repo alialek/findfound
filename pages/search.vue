@@ -1,13 +1,9 @@
 <template>
   <div class="justify-center d-row">
     <v-col styclass="main pd-unset justify-space-evenly ">
-      <div
-        style="margin-top: 64px; width: 90%"
-        class="mx-auto main__search d-col pd-unset"
-      >
+      <div class="mx-auto main__search d-col pd-unset">
         <v-text-field
           v-model="searchField.search"
-          style="width: 100%"
           cache-items
           class="searchField"
           full-width
@@ -18,12 +14,12 @@
           hide-no-data
           hide-details
           placeholder="Поиск вакансий"
-          @input="sendRequest"
+          @input="handleSearchInput"
         ></v-text-field>
         <v-row>
-          <v-col cols="3">
+          <v-col cols="12" md="3">
             <v-combobox
-              v-model="searchField.skills"
+              v-model="searchField.skill"
               :items="entries"
               :loading="isLoading"
               :search-input.sync="searchSkill"
@@ -34,11 +30,10 @@
               small-chips
               placeholder="Django, Figma..."
               label="Навыки"
-              multiple
-              return-object
+              @change="searchSkill = ''"
             ></v-combobox>
           </v-col>
-          <v-col cols="3"
+          <v-col cols="12" md="3"
             ><v-select
               v-model="searchField.employment_type"
               small-chips
@@ -51,7 +46,7 @@
             >
             </v-select
           ></v-col>
-          <v-col cols="3"
+          <v-col cols="12" md="3"
             ><v-select
               v-model="searchField.experience_type"
               small-chips
@@ -64,7 +59,7 @@
             >
             </v-select
           ></v-col>
-          <v-col cols="3"
+          <v-col cols="12" md="3"
             ><v-select
               v-model="searchField.schedule_type"
               small-chips
@@ -83,7 +78,7 @@
             <span class="text-body-1 text--secondary"
               >Найдено вакансий: {{ vacancies.length }}
             </span>
-            <div class="d-row justify-space-between">
+            <div class="d-row justify-space-around">
               <t-card
                 v-for="vacancy in vacancies"
                 :id="vacancy.id"
@@ -110,7 +105,7 @@
             class="justify-center align-center"
           >
             <v-card elevation="0">
-              <v-col style="text-align: center">
+              <v-col class="search__placeholder">
                 <placeholder
                   emoji="/img/e_magnify.png"
                   class="my-6"
@@ -137,6 +132,7 @@ export default {
       entries: [],
       isLoading: false,
       searchSkill: '',
+      timeout: null,
       loading: false,
       items: [],
       searchField: {
@@ -144,7 +140,7 @@ export default {
         experience_type: '',
         schedule_type: '',
         employment_type: '',
-        skills: null,
+        skill: null,
       },
       select: null,
       vacancies: [],
@@ -165,13 +161,16 @@ export default {
     },
   },
   watch: {
-    'searchField.skills'(val) {
+    'searchField.skill'(val) {
       this.sendRequest()
     },
     'searchField.experience_type'(val) {
       this.sendRequest()
     },
-    'searchField.search'(val) {
+    'searchField.employment_type'(val) {
+      this.sendRequest()
+    },
+    'searchField.schedule_type'(val) {
       this.sendRequest()
     },
     searchSkill(val) {
@@ -193,25 +192,35 @@ export default {
   mounted() {
     if (this.$route.query.text) {
       this.searchField.search = this.$route.query.text
+    } else {
+      this.sendRequest()
     }
   },
   methods: {
+    handleSearchInput(e) {
+      if (this.timeout) clearTimeout(this.timeout)
+      this.timeout = setTimeout(() => {
+        this.sendRequest()
+      }, 300)
+    },
     sendRequest() {
       const data = {
-        text: this.searchField.search,
+        text: this.searchField.search || '',
       }
-
-      if (this.searchField.skills !== null)
-        data.skill = this.searchField.skills.id
+      console.log(this.searchField)
+      if (this.searchField.skill) data.skill = this.searchField.skill
       if (this.searchField.experience_type)
         data.experience_type = this.searchField.experience_type
-
+      if (this.searchField.employment_type)
+        data.employment_type = this.searchField.employment_type
+      if (this.searchField.schedule_type)
+        data.schedule_type = this.searchField.schedule_type
       this.getVacancies(data)
     },
     getVacancies(data) {
       this.loading = true
       this.$api.vacancies
-        .vacancies({ text: this.searchField.search })
+        .vacancies(data)
         .then((res) => {
           this.vacancies = res.data
           this.loading = false
@@ -222,4 +231,19 @@ export default {
 }
 </script>
 
-<style lang="css"></style>
+<style lang="css" scope>
+.v-text-field__details {
+  display: none !important;
+}
+.main__search {
+  margin-top: 56px;
+  width: 90%;
+}
+
+.main__search .searchField {
+  width: 100%;
+}
+.search__placeholder {
+  text-align: center;
+}
+</style>

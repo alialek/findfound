@@ -135,11 +135,12 @@
       ></v-text-field>
     </div>
     <v-data-table
+      :expanded.sync="expanded"
       :headers="headers"
       :items="items"
-      :single-expand="true"
-      item-key="name"
+      item-key="response_id"
       show-expand
+      single-expand
       :search="search"
       @item-expanded="loadResume"
     >
@@ -210,6 +211,7 @@ export default {
     return {
       itemsPerPageArray: [10, 20, 50, 100],
       search: '',
+      expanded: [],
       filter: {},
       sortDesc: false,
       page: 1,

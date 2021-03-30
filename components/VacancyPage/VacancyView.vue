@@ -94,9 +94,14 @@ export default {
   },
   methods: {
     response() {
-      this.$api.requests.sendResponse({ vacancy: this.id }).then(() => {
-        this.$store.commit('processes/SET_SUCCESS', 'Отклик доставлен')
-      })
+      this.$api.requests
+        .sendResponse({ vacancy: this.id })
+        .then(() => {
+          this.$store.commit('processes/SET_SUCCESS', 'Отклик доставлен')
+        })
+        .catch((err) => {
+          if (err.response.status === 403) this.$router.push('/login')
+        })
     },
   },
 }

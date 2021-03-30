@@ -2,18 +2,12 @@
   <div class="mx-4 header">
     <div class="header__container">
       <div v-if="project.name">
-        <v-icon v-if="project.logo === ''" style="font-size: 56px"
-          >mdi-domain</v-icon
-        >
-        <v-img
-          v-else
-          style="width: 70px; height: 70px; border-radius: 100px"
-          :src="`https://findfoundbucket.s3.amazonaws.com/media/${project.logo}`"
-        />
-        <h1 class="vacancy__title" style="margin-top: 24px">
+        <v-icon v-if="project.logo === ''">mdi-domain</v-icon>
+        <v-img v-else class="project__logo" :src="setLogo(project.logo)" />
+        <h1 class="vacancy__title mt-6">
           {{ project.name }}
         </h1>
-        <p class="small-header" style="margin-top: 0">Проект</p>
+        <p class="small-header mt-0">Проект</p>
       </div>
       <div v-else>
         <v-progress-circular
@@ -69,9 +63,30 @@ export default {
     },
   },
   methods: {
+    setLogo(logo) {
+      return logo.includes('https://')
+        ? logo
+        : `https://findfoundbucket.s3.amazonaws.com/media/${logo}`
+    },
     refresh() {
       this.$store.dispatch('project/getProject', this.$route.query.id)
     },
   },
 }
 </script>
+
+<style lang="css">
+.project__logo .v-image__image {
+  background-position: center left !important;
+}
+
+.header__container .v-icon {
+  font-size: 56px;
+}
+
+.project__logo {
+  width: 70px;
+  height: 70px;
+  border-radius: 100px;
+}
+</style>

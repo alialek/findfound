@@ -6,9 +6,9 @@
       </v-btn>
       <v-toolbar-title>Редактирование</v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-toolbar-items>
+      <!-- <v-toolbar-items>
         <v-btn dark text @click="updateVacancy"> Готово </v-btn>
-      </v-toolbar-items>
+      </v-toolbar-items> -->
     </v-toolbar>
     <div v-if="vacancy.name">
       <div class="d-row">
@@ -91,39 +91,67 @@
           </form-field>
         </v-col>
       </div>
-      <form-field
-        icon="mdi-badge-account-horizontal-outline"
-        title="Навыки"
-        max-width="100%"
+      <v-col cols="12">
+        <form-field
+          icon="mdi-badge-account-horizontal-outline"
+          title="Навыки"
+          max-width="100%"
+        >
+          <v-combobox
+            v-model="vacancy.skills"
+            :items="entries"
+            :loading="isLoading"
+            :search-input.sync="search"
+            hide-selected
+            small-chips
+            multiple
+            filled
+            dense
+            item-text="text"
+            item-value="id"
+            append-icon="mdi-magnify"
+            placeholder="Начните вводить..."
+            :delimiters="[',']"
+            return-object
+            style="max-width: 650px"
+            @change="search = ''"
+            @input="addSkill"
+          >
+            <template v-slot:selection></template>
+            <template v-slot:no-data>
+              <v-list-item>
+                <v-list-item-content>
+                  <v-list-item-title v-if="search">
+                    Ничего не найдено по запросу "<strong>{{ search }}</strong
+                    >".<br />
+                    Нажмите <kbd>enter</kbd>, чтобы добавить новый навык
+                  </v-list-item-title>
+                  <v-list-item-title v-else> Введите навык </v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+            </template></v-combobox
+          >
+          <v-chip
+            v-for="(skill, i) in vacancy.skills"
+            :key="i"
+            small
+            close
+            class="mt-2 mr-2"
+            @click:close="removeSkill(skill)"
+            >{{ skill.text }}</v-chip
+          >
+        </form-field>
+        <form-field icon="mdi-text-subject" title="Описание" max-width="100%">
+          <div class="editorx_body">
+            <div id="codex-editor" />
+          </div>
+        </form-field>
+      </v-col>
+      <v-col
+        ><v-btn color="success" class="my-8" depressed @click="save">
+          Сохранить
+        </v-btn></v-col
       >
-        <v-combobox
-          v-model="vacancy.skills"
-          :items="entries"
-          :loading="isLoading"
-          :search-input.sync="search"
-          hide-no-data
-          hide-selected
-          item-text="text"
-          item-value="id"
-          small-chips
-          dense
-          multiple
-          filled
-          placeholder="Начните вводить, чтобы увидеть список "
-          return-object
-          style="max-width: 650px"
-          @change="search = ''"
-        ></v-combobox>
-      </form-field>
-      <form-field icon="mdi-text-subject" title="Описание" max-width="100%">
-        <div class="editorx_body">
-          <div id="codex-editor" />
-        </div>
-      </form-field>
-
-      <v-btn color="success" class="my-8 ml-2" depressed @click="save">
-        Сохранить
-      </v-btn>
     </div>
   </v-card>
 </template>
@@ -163,14 +191,17 @@ export default {
     },
   },
   watch: {
-    vacancy() {
-      if (this.vacancy.salary) {
-        this.salaryEnabled = true
-      }
-      if (this.vacancy.name) {
-        this.vacancy.employment_type.id = +this.vacancy.employment_type.id
-        this.vacancy.schedule_type.id = +this.vacancy.schedule_type.id
-      }
+    vacancy: {
+      handler() {
+        if (this.vacancy.salary) {
+          this.salaryEnabled = true
+        }
+        if (this.vacancy.name) {
+          this.vacancy.employment_type.id = +this.vacancy.employment_type.id
+          this.vacancy.schedule_type.id = +this.vacancy.schedule_type.id
+        }
+      },
+      immediate: true,
     },
     vacancyId: {
       handler() {
@@ -180,7 +211,7 @@ export default {
             this.vacancy = res.data
             setTimeout(() => {
               this.myEditor()
-            }, 100)
+            }, 300)
           })
           .finally(() => this.$store.commit('processes/LOADING_STOP'))
       },
@@ -203,8 +234,15 @@ export default {
     },
   },
   methods: {
-    updateVacancy() {
-      this.$emit('closeVacancyEditor')
+    addSkill(items) {
+      this.vacancy.skills = items.map((item) =>
+        typeof item === 'object' ? item : { text: item }
+      )
+    },
+    removeSkill(item) {
+      this.vacancy.skills = this.vacancy.skills.filter(
+        (skill) => skill.text !== item.text
+      )
     },
     save() {
       window.editor.save().then((text) => {
@@ -213,6 +251,8 @@ export default {
           ...this.vacancy,
           description: JSON.stringify(text),
           schedule_type: this.vacancy.schedule_type.id,
+          employment_type: this.vacancy.employment_type.id,
+          experience_type: this.vacancy.experience_type.id,
         }
         this.$api.vacancies
           .updateVacancy(data, this.vacancyId)
@@ -223,6 +263,7 @@ export default {
               'Вакансия отредактирована'
             )
             this.$emit('closeVacancyEditor')
+            this.$emit('refresh')
           })
           .catch((err) => {
             this.$store.commit(

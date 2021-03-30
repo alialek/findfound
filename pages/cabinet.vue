@@ -11,19 +11,20 @@
       <div v-if="user.first_name">
         <v-icon
           v-if="user.photo === ''"
-          style="font-size: 64px; cursor: pointer"
+          class="user__avatar"
           @click="selectFile()"
           >mdi-camera</v-icon
         >
         <v-img
           v-else
-          style="width: 90px; height: 90px; border-radius: 100px"
+          class="user__avatar"
           :src="`https://findfoundbucket.s3.amazonaws.com/media/${user.photo}`"
+          @click="selectFile()"
         />
-        <h1 style="margin-top: 24px">
+        <h1 class="mt-6">
           {{ user.first_name + ' ' + user.last_name }}
         </h1>
-        <p class="small-header" style="margin-top: 0px">Профиль</p>
+        <p class="small-header mt-0">Профиль</p>
       </div>
       <div v-else>
         <v-progress-circular
@@ -54,19 +55,7 @@ export default {
   components: {
     CabinetView,
   },
-  asyncData({
-    isDev,
-    route,
-    store,
-    env,
-    params,
-    query,
-    req,
-    res,
-    redirect,
-    error,
-    $api,
-  }) {
+  asyncData({ store }) {
     store.dispatch('user/getUserInfo')
     store.dispatch('user/getResponses')
     store.dispatch('utils/getConstants')
@@ -110,3 +99,13 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+.user__avatar {
+  width: 90px;
+  height: 90px;
+  border-radius: 100px;
+  cursor: pointer;
+  font-size: 64px;
+}
+</style>

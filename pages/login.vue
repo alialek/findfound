@@ -11,8 +11,7 @@
               <form-field
                 column
                 max-width="100%"
-                class="pd-unset"
-                style="padding-top: 8px"
+                class="pd-unset pt-2"
                 title="Эл.почта"
                 icon="mdi-email"
               >
@@ -27,8 +26,7 @@
               <form-field
                 column
                 max-width="100%"
-                class="mt-n4 pd-unset"
-                style="padding-top: 8px"
+                class="mt-n4 pd-unset pt-2"
                 title="Пароль"
                 icon="mdi-key"
               >
@@ -43,9 +41,6 @@
                   @click:append="show1 = !show1"
                 ></v-text-field>
               </form-field>
-              <v-btn :href="VKAuthLink" text block elevation="0">
-                <v-icon color="#2787F5">mdi-vk</v-icon> Вход с VK
-              </v-btn>
               <v-btn
                 class="mt-4"
                 color="primary"
@@ -57,14 +52,20 @@
               >
                 Войти
               </v-btn>
+              <v-btn class="mt-2" :href="VKAuthLink" text block elevation="0">
+                <v-icon class="mr-1" color="#2787F5">mdi-vk</v-icon> Вход с VK
+              </v-btn>
+              <v-btn class="mt-2" text block elevation="0" @click="step++">
+                <v-icon class="mr-1">mdi-account-plus</v-icon> Регистрация
+              </v-btn>
             </v-form>
 
-            <v-row class="justify-space-between mx-1">
+            <!-- <v-row class="justify-space-between mx-1">
               <a class="mt-8 link text-center d-block" @click="step++"
                 >Регистрация</a
               >
-              <a class="mt-8 link text-center d-block">Забыли пароль?</a>
-            </v-row>
+              <a class="mt-8 link text-center d-block">Забыли пароль?</a> 
+            </v-row> -->
           </v-window-item>
 
           <v-window-item :value="2">
@@ -168,8 +169,7 @@
             <form-field
               column
               max-width="100%"
-              class="pd-unset"
-              style="padding-top: 8px"
+              class="pd-unset pt-2"
               title="Имя"
               icon="mdi-account"
             >
@@ -351,7 +351,9 @@ export default {
       return result
     },
     passwordConfirmationRule() {
-      return () => this.password === this.rePassword || 'Пароли не совпадают'
+      return () =>
+        this.registration.password === this.registration.rePassword ||
+        'Пароли не совпадают'
     },
   },
   watch: {

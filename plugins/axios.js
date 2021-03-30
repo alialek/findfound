@@ -1,7 +1,7 @@
 import qs from 'qs'
 export default function ({ $axios, store, app, root }, inject) {
   const api = $axios.create({
-    baseURL: 'https://hr-itmo.herokuapp.com/api/',
+    baseURL: 'https://findfoundme.herokuapp.com/api/',
     timeout: 15000,
     headers: {
       'Content-Type': 'application/json',
@@ -12,7 +12,7 @@ export default function ({ $axios, store, app, root }, inject) {
   })
 
   const request = $axios.create({
-    baseURL: 'https://hr-itmo.herokuapp.com/api/',
+    baseURL: 'https://findfoundme.herokuapp.com/api/',
     timeout: 15000,
     headers: {
       'Content-Type': 'application/json',
@@ -26,24 +26,30 @@ export default function ({ $axios, store, app, root }, inject) {
     ? api.setToken(`Token ${localStorage.getItem('user_ff')}`)
     : api.setToken(false)
 
-  $axios.onRequest(() => {
-    store.commit('processes/LOADING_START')
+  api.onRequest((req) => {
+    if (req.method === 'post' || req.method === 'put') {
+      store.commit('processes/BLOCKED_LOADING_START')
+    }
   })
 
-  $axios.onResponse(() => {
-    store.commit('processes/LOADING_STOP')
+  api.onResponse((req) => {
+    if (req.config.method === 'post' || req.config.method === 'put') {
+      store.commit('processes/BLOCKED_LOADING_STOP')
+    }
   })
-  $axios.onRequestError(() => {
+  api.onRequestError(() => {
     store.commit('processes/SET_ERROR', 'Кажется, у вас проблемы с интернетом')
   })
-  $axios.onResponseError((error) => {
+  api.onResponseError((error) => {
+    store.commit('processes/BLOCKED_LOADING_STOP')
     const code = parseInt(error.response && error.response.status)
     if (code === 400) {
       store.commit('processes/SET_ERROR', error.response.data)
     } else if (code === 404) {
       store.commit('processes/SET_ERROR', 'Не найдено')
     } else if (code === 401) {
-      store.commit('processes/SET_ERROR', 'Кажется, надо еще раз войти')
+      localStorage.removeItem('user_ff')
+      store.commit('processes/SET_ERROR', 'Кажется, надо войти')
       app.router.push('/login')
     } else {
       store.commit('processes/SET_ERROR', 'Неопознанная ошибка')

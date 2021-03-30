@@ -9,7 +9,7 @@ export default {
 
   // Global page headers (https://go.nuxtjs.dev/config-head)
   head: {
-    titleTemplate: '%s - findfound',
+    titleTemplate: '%s - первая работа',
     title: 'FindFound',
     meta: [
       { charset: 'utf-8' },
@@ -30,7 +30,7 @@ export default {
     '~/plugins/vc-date-picker',
   ],
 
-  components: true,
+  components: false,
 
   // Modules for dev and build (recommended) (https://go.nuxtjs.dev/config-modules)
   buildModules: [

@@ -18,7 +18,7 @@
         {{ getCityName }}
       </div>
     </div>
-    <div class="mt-8">
+    <div v-if="form.jobs.length" class="mt-8">
       <h3>Опыт работы</h3>
       <div v-for="(job, i) in form.jobs" :key="i" class="mt-2 ml-2">
         <h4>{{ job.name }}</h4>
@@ -28,7 +28,7 @@
         <p>{{ job.duties[0] }}</p>
       </div>
     </div>
-    <div class="mt-8">
+    <div v-if="form.educations.length" class="mt-8">
       <h3>Образование</h3>
       <div v-for="(ed, i) in form.educations" :key="i" class="mt-2 ml-2">
         <h4>{{ ed.university.name }}</h4>
@@ -38,7 +38,7 @@
         <p>{{ ed.specialization.name }}</p>
       </div>
     </div>
-    <div class="mt-8">
+    <div v-if="filteredContacts.length" class="mt-8">
       <h3>Контакты</h3>
       <div class="d-row mt-2 ml-2">
         <div v-for="(contact, i) in filteredContacts" :key="i" class="mr-2">

@@ -19,7 +19,7 @@
                         text
                         color="primary"
                         class="mt-2"
-                        @click="disabled.form = false"
+                        @click="changeForm(isFormCreated)"
                         >Заполнить</v-btn
                       ></placeholder
                     >
@@ -152,16 +152,16 @@
                             </v-list-item>
                           </template></v-combobox
                         >
-                        <v-chip-group :show-arrows="true">
-                          <v-chip
-                            v-for="(skill, i) in resume.skills"
-                            :key="i"
-                            small
-                            close
-                            @click:close="removeSkill(skill)"
-                            >{{ skill.text }}</v-chip
-                          >
-                        </v-chip-group>
+
+                        <v-chip
+                          v-for="(skill, i) in resume.skills"
+                          :key="i"
+                          small
+                          close
+                          class="mt-2"
+                          @click:close="removeSkill(skill)"
+                          >{{ skill.text }}</v-chip
+                        >
                       </form-field>
                     </div>
 
@@ -171,10 +171,10 @@
                     >
 
                     <div
-                      v-for="(education, i) in resume.educations"
-                      :key="education.id"
+                      v-for="education in resume.educations"
+                      :key="education.id + 'ed'"
                     >
-                      <div class="form-grid" :key="education.id">
+                      <div :key="education.id" class="form-grid">
                         <form-field
                           title="Год выпуска"
                           icon="mdi-calendar-range"
@@ -229,13 +229,10 @@
                         </form-field>
                       </div>
                       <v-btn
-                        v-if="i !== 0"
                         text
                         color="error"
                         small
-                        @click="
-                          resume.educations = resume.educations.splice(i, 1)
-                        "
+                        @click="deleteEducation(education.id)"
                         >Удалить</v-btn
                       >
 
@@ -278,12 +275,7 @@
                           </v-textarea>
                         </form-field>
                       </div>
-                      <v-btn
-                        v-if="i !== 0"
-                        text
-                        color="error"
-                        small
-                        @click="deleteJob(job.id)"
+                      <v-btn text color="error" small @click="deleteJob(job.id)"
                         >Удалить</v-btn
                       >
                       <v-divider class="my-4"></v-divider>
@@ -363,7 +355,7 @@ import Placeholder from '@/atoms/Placeholder.vue'
 import FormField from '@/atoms/Form-field.vue'
 import './cabinet.css'
 import Vue from 'vue'
-import Projects from './projects'
+import Projects from './Projects'
 import Invitations from './Invitations.vue'
 import ResumeViewer from './ResumeViewer.vue'
 export default {
@@ -486,7 +478,7 @@ export default {
       )
       .slice()
 
-    for (let i = 2024; i >= 1990; i--) {
+    for (let i = 2026; i >= 2000; i--) {
       this.years.push(i)
     }
   },
@@ -554,7 +546,7 @@ export default {
         jobs: this.resume.jobs.map((j) => ({
           duration: j.duration,
           name: j.name,
-          duties: j.duties,
+          duties: [j.duties],
         })),
       }
       this.$api.forms.createForm(data).then((res) => {
@@ -565,6 +557,11 @@ export default {
     },
     deleteJob(id) {
       this.resume.jobs = this.resume.jobs.filter((item) => id !== item.id)
+    },
+    deleteEducation(id) {
+      this.resume.educations = this.resume.educations.filter(
+        (item) => id !== item.id
+      )
     },
     updateForm() {},
     updateInfo() {

@@ -457,4 +457,8 @@ export default {
 
 <style lang="scss" scoped>
 @import url('./LandingPage.css');
+
+#advantage {
+  margin-bottom: 40px;
+}
 </style>

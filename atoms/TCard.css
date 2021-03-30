@@ -8,6 +8,11 @@
   border: 1px solid #dddddd !important;
 }
 
+.team-card__skills {
+  flex-wrap: nowrap;
+  overflow: hidden;
+}
+
 .team-card__logo {
   border-radius: 360px;
   height: 56px;
@@ -15,7 +20,7 @@
   margin-bottom: 16px;
   background-size: cover;
   background-size: cover;
-  background-position: center center;
+  background-position: center left;
 }
 
 .team-card__title {
@@ -26,6 +31,11 @@
   line-height: 33px;
   margin-bottom: 16px;
   letter-spacing: 0.25px;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
 }
 
 .v-card--flat {
@@ -79,7 +89,7 @@
   height: 60px;
 }
 
-@media (max-width: 960px) {
+@media (max-width: 620px) {
   .team-card {
     width: 100% !important;
   }
@@ -93,9 +103,9 @@
   }
 }
 
-@media (max-width: 320px) {
+/* @media (max-width: 320px) {
   .team-card {
     min-width: 230px;
     width: 100% !important;
   }
-}
+} */

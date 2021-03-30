@@ -1,3 +1,4 @@
+/* eslint-disable vue/no-v-html */
 <template>
   <div>
     <v-tabs style="margin-top: 32px" color="#0068CC">
@@ -28,12 +29,34 @@
                 <div class="information">
                   <div class="d-row description">
                     <div class="d-col">
-                      <b>Описание</b>
-                      {{ project.description }}
+                      <p style="margin-top: 0px" class="small-header">
+                        Описание
+                      </p>
+                      <p v-html="project.description"></p>
                     </div>
                   </div>
                 </div>
-                <div class="team">
+                <div v-if="filteredContacts.length" class="mt-8">
+                  <h3>Контакты</h3>
+                  <div class="d-row mt-2 ml-2">
+                    <div
+                      v-for="(contact, i) in filteredContacts"
+                      :key="i"
+                      class="mr-2"
+                    >
+                      <a
+                        v-if="project[contact.id]"
+                        style="display: block"
+                        target="_blank"
+                        no-prefetch
+                        :href="getLink(project[contact.id])"
+                      >
+                        <v-icon>{{ contact.icon }}</v-icon>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+                <!-- <div class="team">
                   <div class="about-section__heading">
                     <b>Команда</b>
                   </div>
@@ -55,7 +78,7 @@
                       emoji="/img/e_business_person.png"
                     ></placeholder>
                   </div>
-                </div>
+                </div> -->
               </section>
             </v-col>
             <v-col cols="12" class="col-sm-3">
@@ -64,7 +87,7 @@
                   <p style="margin-top: 0px" class="small-header">Город</p>
                   <b style="margin-top: 16px"> {{ project.city.name }}</b>
                 </div>
-                <div>
+                <div v-if="project.state">
                   <p class="small-header">Стадия</p>
                   <b style="margin-top: 16px"> {{ project.state }}</b>
                 </div>
@@ -81,77 +104,67 @@
         <v-window v-model="vacancyStep">
           <v-window-item :value="1">
             <section id="vacancy" class="about-section">
-              <v-row>
-                <v-col cols="12" class="col-sm-9">
-                  <v-row v-if="project.vacancies.length > 0">
-                    <t-card
-                      v-for="v in project.vacancies"
-                      :id="v.id"
-                      :key="v.id"
-                      :logo="project.logo"
-                      :title="v.name"
-                      :skills="v.skills"
-                      :description="v.short_description"
-                    >
-                      <template v-slot:menu>
-                        <v-menu v-if="project.is_admin" offset-y>
-                          <template v-slot:activator="{ on }">
-                            <v-icon v-on="on">mdi-dots-vertical</v-icon>
-                          </template>
-                          <v-list dense>
-                            <v-list-item
-                              color="error"
-                              @click="deleteVacancy(v.id)"
-                            >
-                              <v-list-item-icon>
-                                <v-icon>mdi-delete</v-icon>
-                              </v-list-item-icon>
-                              <v-list-item-title>Удалить</v-list-item-title>
-                            </v-list-item>
-                            <v-list-item @click="editVacancy(v.id)">
-                              <v-list-item-icon>
-                                <v-icon>mdi-pencil</v-icon>
-                              </v-list-item-icon>
-                              <v-list-item-title>Изменить</v-list-item-title>
-                            </v-list-item>
-                          </v-list>
-                        </v-menu>
-                      </template></t-card
-                    >
-                  </v-row>
-
-                  <v-row
-                    v-if="project.vacancies.length === 0"
-                    class="justify-center"
-                    style="margin-top: 24px"
-                  >
-                    <v-col class="align-center">
-                      <placeholder
-                        class="my-6"
-                        text="Вакансии еще не опубликованы"
-                        ><v-btn
-                          v-if="project.is_admin"
-                          text
-                          color="primary"
-                          class="mt-2"
-                          @click="vacancyStep = 2"
-                          >Заполнить</v-btn
-                        ></placeholder
-                      >
-                    </v-col>
-                  </v-row>
-                </v-col>
-                <v-col
+              <v-row v-if="project.vacancies.length > 0">
+                <div
                   v-if="project.is_admin && project.vacancies.length !== 0"
-                  cols="12"
-                  class="col-md-3"
+                  @click="vacancyStep = 2"
                 >
-                  <div @click="vacancyStep = 2">
-                    <ActionCard
-                      title="Создать вакансию"
-                      desc="Нажмите на карточку, чтобы открыть форму"
-                    />
-                  </div>
+                  <ActionCard
+                    title="Создать вакансию"
+                    desc="Нажмите на карточку, чтобы открыть форму"
+                  />
+                </div>
+                <t-card
+                  v-for="v in project.vacancies"
+                  :id="v.id"
+                  :key="v.id"
+                  :logo="project.logo"
+                  :title="v.name"
+                  :skills="v.skills"
+                  :description="v.short_description"
+                >
+                  <template v-slot:menu>
+                    <v-menu v-if="project.is_admin" offset-y>
+                      <template v-slot:activator="{ on }">
+                        <v-icon v-on="on">mdi-dots-vertical</v-icon>
+                      </template>
+                      <v-list dense>
+                        <v-list-item @click="editVacancy(v.id)">
+                          <v-list-item-icon>
+                            <v-icon>mdi-pencil</v-icon>
+                          </v-list-item-icon>
+                          <v-list-item-title>Изменить</v-list-item-title>
+                        </v-list-item>
+                        <v-list-item @click="deleteVacancy(v.id)">
+                          <v-list-item-icon>
+                            <v-icon color="error">mdi-delete</v-icon>
+                          </v-list-item-icon>
+                          <v-list-item-title color="error"
+                            >Удалить</v-list-item-title
+                          >
+                        </v-list-item>
+                      </v-list>
+                    </v-menu>
+                  </template></t-card
+                >
+              </v-row>
+
+              <v-row
+                v-if="project.vacancies.length === 0"
+                class="justify-center"
+                style="margin-top: 24px"
+              >
+                <v-col class="align-center">
+                  <placeholder class="my-6" text="Вакансии еще не опубликованы"
+                    ><v-btn
+                      v-if="project.is_admin"
+                      text
+                      color="primary"
+                      class="mt-2"
+                      @click="vacancyStep = 2"
+                      >Заполнить</v-btn
+                    ></placeholder
+                  >
                 </v-col>
               </v-row>
             </section>
@@ -168,7 +181,7 @@
 
               <v-row>
                 <v-col cols="12" class="col-md-6">
-                  <form-field icon="mdi-text-account" title="Заголовок">
+                  <form-field icon="mdi-text-account" title="Заголовок*">
                     <v-text-field
                       v-model="vacancy.name"
                       :filled="disabled.vacancy"
@@ -176,7 +189,7 @@
                       dense
                     ></v-text-field>
                   </form-field>
-                  <form-field icon="mdi-text" title="О вакансии">
+                  <form-field icon="mdi-text" title="О вакансии*">
                     <v-text-field
                       v-model="vacancy.short_description"
                       :filled="disabled.vacancy"
@@ -185,7 +198,7 @@
                     ></v-text-field>
                   </form-field>
 
-                  <form-field icon="mdi-briefcase-outline" title="Опыт работы">
+                  <form-field icon="mdi-briefcase-outline" title="Опыт работы*">
                     <v-select
                       v-model="vacancy.experience_type"
                       item-text="name"
@@ -199,7 +212,7 @@
 
                   <form-field
                     icon="mdi-office-building-marker"
-                    title="Тип занятости"
+                    title="Тип занятости*"
                   >
                     <v-select
                       v-model="vacancy.employment_type"
@@ -213,7 +226,7 @@
                   </form-field>
                 </v-col>
                 <v-col cols="12" class="col-md-6">
-                  <form-field icon="mdi-currency-usd" title="Оплата труда">
+                  <form-field icon="mdi-currency-usd" title="Оплата труда*">
                     <v-checkbox
                       v-model="salaryEnabled"
                       class="custom-checkbox"
@@ -228,10 +241,15 @@
                     <v-text-field
                       v-model="vacancy.salary"
                       filled
+                      type="number"
                       dense
                     ></v-text-field>
                   </form-field>
-                  <form-field icon="mdi-circle-slice-1" title="Условия">
+                  <form-field
+                    v-if="!salaryEnabled"
+                    icon="mdi-circle-slice-1"
+                    title="Условия*"
+                  >
                     <v-text-field
                       v-model="vacancy.partnership"
                       placeholder="Зарплата, доля в проекте..."
@@ -240,7 +258,7 @@
                     ></v-text-field>
                   </form-field>
 
-                  <form-field icon="mdi-calendar-clock" title="График работы">
+                  <form-field icon="mdi-calendar-clock" title="График работы*">
                     <v-select
                       v-model="vacancy.schedule_type"
                       item-text="name"
@@ -263,23 +281,52 @@
                   :items="entries"
                   :loading="isLoading"
                   :search-input.sync="search"
-                  hide-no-data
                   hide-selected
-                  item-text="text"
-                  item-value="id"
                   small-chips
-                  dense
                   multiple
                   filled
-                  placeholder="Начните вводить, чтобы увидеть список "
+                  dense
+                  item-text="text"
+                  item-value="id"
+                  append-icon="mdi-magnify"
+                  placeholder="Начните вводить..."
+                  :delimiters="[',']"
                   return-object
                   style="max-width: 650px"
                   @change="search = ''"
-                ></v-combobox>
+                  @input="addSkill"
+                >
+                  <template v-slot:selection></template>
+                  <template v-slot:no-data>
+                    <v-list-item>
+                      <v-list-item-content>
+                        <v-list-item-title v-if="search">
+                          Ничего не найдено по запросу "<strong>{{
+                            search
+                          }}</strong
+                          >".<br />
+                          Нажмите <kbd>enter</kbd>, чтобы добавить новый навык
+                        </v-list-item-title>
+                        <v-list-item-title v-else>
+                          Введите навык
+                        </v-list-item-title>
+                      </v-list-item-content>
+                    </v-list-item>
+                  </template></v-combobox
+                >
+                <v-chip
+                  v-for="(skill, i) in vacancy.skills"
+                  :key="i"
+                  small
+                  close
+                  class="mt-2 mr-2"
+                  @click:close="removeSkill(skill)"
+                  >{{ skill.text }}</v-chip
+                >
               </form-field>
               <form-field
                 icon="mdi-text-subject"
-                title="Описание"
+                title="Описание*"
                 max-width="100%"
               >
                 <div class="editorx_body">
@@ -301,21 +348,23 @@
     <v-dialog v-model="editVacancyDialog" fullscreen hide-overlay>
       <vacancy-editor
         :vacancy-id="activeVacancy"
+        @refresh="$emit('refresh')"
         @closeVacancyEditor="editVacancyDialog = false"
       />
     </v-dialog>
+    <ConfirmDialog ref="confirm" />
   </div>
 </template>
 
 <script>
 import ActionCard from '@/atoms/ActionCard.vue'
-import ParticipantCard from '@/atoms/Participant-card.vue'
 import FormField from '@/atoms/Form-field.vue'
 import EditorJS from '@editorjs/editorjs'
 import Paragraph from '@editorjs/paragraph'
 import List from '@editorjs/list'
 import TCard from '@/atoms/TCard'
 import Placeholder from '@/atoms/Placeholder.vue'
+import ConfirmDialog from '@/components/dialogs/ConfirmDialog'
 import ResponsesTab from './Responses-tab.vue'
 import VacancyEditor from './VacancyEditor.vue'
 export default {
@@ -324,10 +373,10 @@ export default {
     FormField,
     ActionCard,
     Placeholder,
-    ParticipantCard,
     VacancyEditor,
     TCard,
     ResponsesTab,
+    ConfirmDialog,
   },
   props: {
     user: {
@@ -383,6 +432,12 @@ export default {
     schedule_types() {
       return this.$store.state.utils.schedule_types
     },
+    contacts() {
+      return this.$store.state.utils.contacts
+    },
+    filteredContacts() {
+      return this.contacts.filter((c) => typeof this.project[c.id] === 'string')
+    },
   },
   watch: {
     search(val) {
@@ -409,6 +464,19 @@ export default {
     },
   },
   methods: {
+    getLink(link) {
+      return link.includes('http') ? link : `https://${link}`
+    },
+    addSkill(items) {
+      this.vacancy.skills = items.map((item) =>
+        typeof item === 'object' ? item : { text: item }
+      )
+    },
+    removeSkill(item) {
+      this.vacancy.skills = this.vacancy.skills.filter(
+        (skill) => skill.text !== item.text
+      )
+    },
     editVacancy(id) {
       this.activeVacancy = id
       this.editVacancyDialog = true
@@ -419,12 +487,14 @@ export default {
           ...this.vacancy,
           description: JSON.stringify(text),
           company_id: this.project.id,
+          partnership: this.salaryEnabled
+            ? 'Зарплата'
+            : this.vacancy.partnership,
         }
         this.$api.vacancies
           .createVacancy(data)
           .then((res) => {
             this.vacancyStep = 1
-            this.$store.dispatch('getProject', this.project.id)
             this.$store.commit('processes/SET_SUCCESS', 'Вакансия создана')
             this.$emit('refresh')
           })
@@ -449,17 +519,24 @@ export default {
         )
       })
     },
-    deleteVacancy(id) {
-      this.$api.vacancies
-        .deleteVacancy(id)
-        .then((res) => {
-          this.$store.commit('processes/SET_SUCCESS', 'Вакансия удалена')
-          this.$store.commit('project/filterVacancies', id)
-        })
-        .catch((err) => {
-          console.log(err)
-          this.$store.commit('processes/SET_ERROR', 'Произошла ошибка')
-        })
+    async deleteVacancy(id) {
+      if (
+        await this.$refs.confirm.open(
+          'Подтверждение',
+          'Вы точно хотите удалить эту вакансию?'
+        )
+      ) {
+        this.$api.vacancies
+          .deleteVacancy(id)
+          .then((res) => {
+            this.$store.commit('processes/SET_SUCCESS', 'Вакансия удалена')
+            this.$store.commit('project/filterVacancies', id)
+          })
+          .catch((err) => {
+            console.log(err)
+            this.$store.commit('processes/SET_ERROR', 'Произошла ошибка')
+          })
+      }
     },
     myEditor() {
       window.editor = new EditorJS({

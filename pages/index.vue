@@ -1,24 +1,5 @@
 <template>
   <div class="justify-center p-relative d-row home">
-    <v-menu v-if="token" offset-y>
-      <template v-slot:activator="{ on }"
-        ><v-icon
-          class="p-absolute"
-          style="top: 16px; right: 16px; font-size: 32px"
-          v-on="on"
-          >mdi-account-circle-outline</v-icon
-        >
-      </template>
-      <v-list>
-        <v-list-item to="/cabinet">
-          <v-list-item-title>Личный кабинет</v-list-item-title>
-        </v-list-item>
-        <v-list-item color="error" @click="logout">
-          <v-list-item-title>Выйти</v-list-item-title>
-        </v-list-item>
-      </v-list></v-menu
-    >
-
     <v-col class="main pd-unset">
       <!-- Копипаста с лендинга -->
       <div class="np ng ue uu">
@@ -54,13 +35,8 @@
               <div class="fe aw vg vm">
                 <div class="aw vd">
                   <h1 class="in lt db ra is ce sm">
-                    Найди команду на<br />
+                    Найди первую работу на<br />
                     <h2 class="w ln tl tv tw">FindFound.me</h2>
-                    <span
-                      style="letter-spacing: 2px"
-                      class="lt d-none d-md-block font-weight-regular rz la sj"
-                      >Единая база стартапов и талантов</span
-                    >
                   </h1>
 
                   <div class="i_ mt-8">
@@ -91,9 +67,38 @@
                         </template>
                       </v-text-field>
                     </v-form>
-                    <div class="d-col main__slide">
-                      <h2 class="h2 sm lt mt-12">Стартапы ищут:</h2>
-                      <v-slide-group v-if="!loading" show-arrows>
+                    <div class="mt-12 d-col main__slide">
+                      <h2 class="h2 sm lt mt-12">Стартапы и компании ищут:</h2>
+                      <div v-if="!loading" class="d-row justify-space-between">
+                        <t-card
+                          v-for="vacancy in vacancies"
+                          :id="vacancy.id"
+                          :key="vacancy.id"
+                          class="px-2"
+                          :title="vacancy.name"
+                          :company="vacancy.company_name"
+                          :logo="vacancy.company_logo"
+                          :skills="vacancy.skills"
+                          :company-id="vacancy.company_id"
+                        />
+                        <div style="width: 100%" class="px-2">
+                          <v-btn
+                            href="/search"
+                            depressed
+                            block
+                            color="primary"
+                            class="mx-auto"
+                            style="color: white !important"
+                            large
+                            >Показать все</v-btn
+                          >
+                        </div>
+                      </div>
+
+                      <!-- <v-slide-group
+                        v-if="!loading && !$vuetify.breakpoint.mobile"
+                        show-arrows
+                      >
                         <v-slide-item
                           v-for="vacancy in vacancies"
                           :key="vacancy.id"
@@ -108,7 +113,21 @@
                             :company-id="vacancy.company_id"
                           /> </v-slide-item
                       ></v-slide-group>
-
+                      <div
+                        class="d-col"
+                        v-if="!loading && $vuetify.breakpoint.mobile"
+                      >
+                        <t-card
+                          v-for="vacancy in vacancies.slice(0, 3)"
+                          :id="vacancy.id"
+                          :key="vacancy.id"
+                          :title="vacancy.name"
+                          :company="vacancy.company_name"
+                          :logo="vacancy.company_logo"
+                          :skills="vacancy.skills"
+                          :company-id="vacancy.company_id"
+                        />
+                      </div> -->
                       <v-row v-if="loading" class="justify-center">
                         <v-progress-circular
                           indeterminate
@@ -131,6 +150,7 @@
 <script>
 import TCard from '@/atoms/TCard.vue'
 import LandingSections from '../components/IndexPage/LandingSections'
+import './Page.css'
 export default {
   name: 'Main',
   components: { TCard, LandingSections },
@@ -138,7 +158,7 @@ export default {
     return {
       loading: false,
       items: [],
-      search: null,
+      search: '',
       select: null,
       vacancies: [],
     }

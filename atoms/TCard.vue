@@ -1,5 +1,5 @@
 <template>
-  <div class="team-card__holder ma-2">
+  <div class="team-card__holder pa-2" @click="openPage">
     <v-card class="team-card" flat>
       <v-col class="squared__col pd-unset justify-space-around">
         <div class="justify-space-between align-start d-row team-card__info">
@@ -8,41 +8,38 @@
             alt="logo"
             class="team-card__logo"
             :style="{
-              backgroundImage: `url(https://findfoundbucket.s3.amazonaws.com/media/${logo})`,
+              backgroundImage: setLogo,
             }"
           />
           <v-icon v-else alt="logo" size="56" class="team-card__logo"
             >mdi-domain</v-icon
           >
+
           <slot style="width: fit-content" name="menu"></slot>
         </div>
         <div>
-          <nuxt-link :to="`/${type}?id=${id}`">
-            <h4
-              class="team-card__title"
-              :style="{ marginBottom: company.length && '0' }"
+          <h4
+            class="team-card__title"
+            :style="{ marginBottom: company.length && '0' }"
+          >
+            {{ title }}
+          </h4>
+
+          <p class="team-card__company">
+            {{ company }}
+            <v-icon v-if="verified" style="font-size: 20px"
+              >mdi-check-circle</v-icon
             >
-              {{ title }}
-            </h4></nuxt-link
-          >
-          <nuxt-link v-if="company !== ''" :to="`/project?id=${companyId}`">
-            <p class="team-card__company">
-              {{ company }}
-              <v-icon v-if="verified" style="font-size: 20px"
-                >mdi-check-circle</v-icon
-              >
-            </p></nuxt-link
-          >
+          </p>
         </div>
 
-        <nuxt-link :to="`/${type}?id=${id}`">
-          <div>
-            <p class="team-card__caption">
-              {{ description }}
-            </p>
-          </div>
-        </nuxt-link>
-        <div v-if="skills.length > 0" class="d-row">
+        <div>
+          <p class="team-card__caption">
+            {{ description }}
+          </p>
+        </div>
+
+        <div v-if="skills.length > 0" class="d-row team-card__skills">
           <div
             v-for="skill in skills"
             :key="skill.id"
@@ -119,10 +116,23 @@ export default {
       default: false,
     },
   },
-  mounted() {},
+  computed: {
+    setLogo() {
+      return this.logo.includes('https://')
+        ? `url(${this.logo})`
+        : `url(https://findfoundbucket.s3.amazonaws.com/media/${this.logo})`
+    },
+  },
+  methods: {
+    openPage(isForced = false) {
+      if (this.type === 'vacancy' || isForced) {
+        return this.$router.push(`/${this.type}?id=${this.id}`)
+      }
+    },
+  },
 }
 </script>
-<style lang="css">
+<style lang="css" scope>
 .team-card {
   border: 1px solid #dddddd !important;
   height: 100%;
@@ -130,7 +140,6 @@ export default {
 .team-card:hover {
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.12) !important;
 }
-
 /* .custom-chip {
   border: 1px solid #dddddd;
   box-sizing: border-box;
