@@ -25,7 +25,7 @@
     "@editorjs/paragraph": "^2.8.0",
     "@nuxt/content": "^1.9.0",
     "@nuxtjs/axios": "^5.12.2",
-    "core-js": "^3.6.5",
+    "core-js": "^3.23.0",
     "nuxt": "^2.14.6",
     "qs": "^6.9.4",
     "v-calendar": "^2.0.2"
